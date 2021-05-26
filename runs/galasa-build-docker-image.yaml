@@ -10,15 +10,15 @@ spec:
     name: build-publish-galasa-build
   params:
     - name: gitUrl
-      value: https://github.com/galasa-dev/tekton-build
+      value: https://github.com/Jimbo4794/build
     - name: gitRevision
-      value: master
+      value: tekton-galasa-build-engine
     - name: imageUrl
       value: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasa/galasa-build
     - name: imageTag
       value: "latest"
     - name: pathToContext
-      value: docker/galasa-build
+      value: docker/galasaBuild
   serviceAccountName: build-bot
   workspaces:
     - name: git-source
