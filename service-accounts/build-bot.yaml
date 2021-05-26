@@ -4,3 +4,4 @@ metadata:
   name: build-bot
 secrets:
   - name: harbor-user-pass
+  - name: github-creds

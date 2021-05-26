@@ -1,0 +1,15 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: openapi-update-github
+spec:
+  workspaces:
+  - name: ws
+    mountPath: /workspace
+  steps:
+  - name: update-github
+    workingDir: /workspace/openapi-go
+    image: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasa/galasa-build
+    command:
+    - ls 
+    - -al

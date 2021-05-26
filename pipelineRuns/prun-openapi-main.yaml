@@ -1,0 +1,28 @@
+kind: PipelineRun
+apiVersion: tekton.dev/v1beta1
+metadata:
+  generateName: openapi-main-build-
+  namespace: tekton
+spec:
+  pipelineRef:
+    name: openapi-build
+  resources:
+  - name: git-openapi
+    resourceRef:
+      name: openapi-main-git
+  - name: git-openapi-go
+    resourceRef:
+      name: openapi-go-main-git
+  podTemplate:
+    nodeSelector:
+      beta.kubernetes.io/arch: amd64      
+  workspaces:
+    - name: pipeline-ws1 # this workspace name must be declared in the Pipeline
+      volumeClaimTemplate:
+        spec:
+          storageClassName: rbd
+          accessModes:
+            - ReadWriteOnce # access mode may affect how you can use this volume in parallel tasks
+          resources:
+            requests:
+              storage: 100Mi

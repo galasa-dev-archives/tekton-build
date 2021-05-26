@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: openapi-build
+spec:
+  workspaces:
+  - name: ws
+    mountPath: /workspace
+  resources:
+    inputs:
+      - name: git-openapi
+        type: git
+        targetPath: openapi
+      - name: git-openapi-go
+        type: git
+        targetPath: openapi-go
+  params:
+  steps:
+  - name: openapi-generate
+    workingDir: /workspace/openapi
+    image: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasa/galasa-build
+    command:
+    - ./build.sh

@@ -1,0 +1,33 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: openapi-build
+spec:
+  workspaces:
+  - name: pipeline-ws1 
+  resources:
+  - name: git-openapi
+    type: git
+  - name: git-openapi-go
+    type: git
+  tasks:
+  - name: build-openapi
+    taskRef:
+      name: openapi-build
+    resources:
+      inputs:
+      - name: git-openapi
+        resource: git-openapi
+      - name: git-openapi-go
+        resource: git-openapi-go
+    workspaces:
+    - name: ws
+      workspace: pipeline-ws1
+  - name: push-github
+    taskRef:
+      name: openapi-update-github
+    runAfter:
+    - build-openapi 
+    workspaces:
+    - name: ws
+      workspace: pipeline-ws1

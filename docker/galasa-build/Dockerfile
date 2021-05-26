@@ -20,3 +20,5 @@ ENV PATH=$PATH:/opt/gradle/gradle-6.8.2/bin
 RUN mkdir /opt/openapi
 RUN wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.1.0/openapi-generator-cli-5.1.0.jar -O /opt/openapi/openapi-generator-cli.jar
 
+RUN mkdir /workspace
+WORKDIR /workspace
