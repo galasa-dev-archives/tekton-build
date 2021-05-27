@@ -16,6 +16,13 @@ spec:
         targetPath: openapi-go
   params:
   steps:
+  - name: git-checkout
+    workingDir: /workspace/openapi-go
+    image: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasa/galasa-build
+    command:
+    - git
+    - checkout
+    - main
   - name: openapi-generate
     workingDir: /workspace/openapi
     image: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasa/galasa-build

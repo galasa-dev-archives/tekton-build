@@ -6,6 +6,7 @@ metadata:
 spec:
   pipelineRef:
     name: openapi-build
+  serviceAccountName: build-bot
   resources:
   - name: git-openapi
     resourceRef:
@@ -15,7 +16,8 @@ spec:
       name: openapi-go-main-git
   podTemplate:
     nodeSelector:
-      beta.kubernetes.io/arch: amd64      
+      beta.kubernetes.io/arch: amd64
+      platform: hdc      
   workspaces:
     - name: pipeline-ws1 # this workspace name must be declared in the Pipeline
       volumeClaimTemplate:
