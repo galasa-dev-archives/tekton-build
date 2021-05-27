@@ -2,23 +2,37 @@ FROM nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/library/ubuntu:latest
 
 RUN apt-get update && apt-get install -y unzip \
     curl \
-    openjdk-11-jdk \
-    maven \
-    gpg \
-    wget
+    gpg && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Installing Java 11
+RUN mkdir /usr/local/java
+RUN curl -L https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk11u-2021-05-07-07-34/OpenJDK11U-jdk_x64_linux_openj9_2021-05-07-07-34.tar.gz -o /usr/local/java/OpenJDK11U-jdk_x64_linux_openj9_2021-05-07-07-34.tar.gz && tar -zxvf /usr/local/java/OpenJDK11U-jdk_x64_linux_openj9_2021-05-07-07-34.tar.gz -C /usr/local/java && rm /usr/local/java/OpenJDK11U-jdk_x64_linux_openj9_2021-05-07-07-34.tar.gz 
+ENV JAVA_HOME=/usr/local/java/jdk-11.0.12+1
+ENV PATH=$PATH:$JAVA_HOME/bin
+
+RUN java -version
+
+# Installing maven
+RUN mkdir /opt/maven
+RUN curl -L https://downloads.apache.org/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz -o /opt/maven/apache-maven-3.8.1-bin.tar.gz && tar -zxvf /opt/maven/apache-maven-3.8.1-bin.tar.gz -C /opt/maven/ && rm /opt/maven/apache-maven-3.8.1-bin.tar.gz
+ENV PATH=$PATH:/opt/maven/apache-maven-3.8.1/bin
+
+RUN mvn -v
+
+# Installing Github CLI
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
 RUN apt update && apt install -y git \
-    gh
+    gh && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Installing 6.8.2 version of gradle
 RUN mkdir /opt/gradle
-RUN curl -L https://services.gradle.org/distributions/gradle-6.8.2-bin.zip -o gradle-6.8.2-bin.zip
-RUN unzip -d /opt/gradle gradle-6.8.2-bin.zip
+RUN curl -L https://services.gradle.org/distributions/gradle-6.8.2-bin.zip -o /tmp/gradle-6.8.2-bin.zip && unzip -d /opt/gradle /tmp/gradle-6.8.2-bin.zip && rm /tmp/gradle-6.8.2-bin.zip
 ENV PATH=$PATH:/opt/gradle/gradle-6.8.2/bin
 
+# Retrieving the openapi jar
 RUN mkdir /opt/openapi
-RUN wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.1.0/openapi-generator-cli-5.1.0.jar -O /opt/openapi/openapi-generator-cli.jar
+RUN curl -L https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.1.0/openapi-generator-cli-5.1.0.jar -o /opt/openapi/openapi-generator-cli.jar
 
 RUN mkdir /workspace
 WORKDIR /workspace
