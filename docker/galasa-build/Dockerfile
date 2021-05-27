@@ -2,6 +2,7 @@ FROM nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/library/ubuntu:latest
 
 RUN apt-get update && apt-get install -y unzip \
     curl \
+    xz-utils \
     gpg && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Installing Java 11
@@ -33,6 +34,11 @@ ENV PATH=$PATH:/opt/gradle/gradle-6.8.2/bin
 # Retrieving the openapi jar
 RUN mkdir /opt/openapi
 RUN curl -L https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.1.0/openapi-generator-cli-5.1.0.jar -o /opt/openapi/openapi-generator-cli.jar
+
+# Installing node and npm
+RUN mkdir /opt/node
+RUN curl -L https://nodejs.org/dist/v12.21.0/node-v12.21.0-linux-x64.tar.xz -o /opt/node/node-v12.21.0-linux-x64.tar.xz && tar xf /opt/node/node-v12.21.0-linux-x64.tar.xz -C /opt/node/ && rm /opt/node/node-v12.21.0-linux-x64.tar.xz
+ENV PATH=$PATH:/opt/node/node-v12.21.0-linux-x64/bin
 
 #RUN mkdir /workspace
 WORKDIR /workspace
