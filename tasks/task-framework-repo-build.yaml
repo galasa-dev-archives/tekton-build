@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: framework-repo-build
+spec:
+  resources:
+    inputs:
+      - name: git-framework
+        type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  - name: mavenVersion
+    type: string
+  - name: mavenCentralRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: mavenSourceRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: dockerRepo
+    type: string
+    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  steps:
+  - name: gradle-build
+    workingDir: /workspace/git-framework/galasa-parent
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - gradle
+    - --no-daemon
+    - --console 
+    - plain
+    - -PsourceMaven=$(params.mavenSourceRepo)
+    - -PcentralMaven=$(params.mavenCentralRepo)
+    - -PtargetMaven=/workspace/git-framework/docker/repo
+    - publish
+  - name: docker-build
+    workingDir: /workspace/git-framework/docker
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./Dockerfile
+    - --context=/workspace/git-framework/docker
+    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-framework:$(params.version)-$(params.branch)
+    - --oci-layout-path=/workspace/git-framework/docker/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=mavenVersion=$(params.mavenVersion)
+    - --build-arg=branch=$(params.branch)
+    - --build-arg=gitHash=$(resources.inputs.git-framework.commit)

@@ -1,0 +1,42 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: framework-repo-build
+spec:
+  resources:
+  - name: git-framework
+    type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  - name: mavenVersion
+    type: string
+  tasks:
+  - name: framework
+    taskRef:
+      name: framework-repo-build
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: mavenVersion
+      value: $(params.mavenVersion)
+    - name: mavenSourceRepo
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/maven
+    resources:
+      inputs:
+      - name: git-framework
+        resource: git-framework
+  - name: recycle-deployment
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - framework
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.branch)-framework

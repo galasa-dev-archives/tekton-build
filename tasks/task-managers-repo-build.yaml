@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: managers-repo-build
+spec:
+  resources:
+    inputs:
+      - name: git-managers
+        type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  - name: extensionsVersion
+    type: string
+  - name: mavenCentralRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: extensionsSourceRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: dockerRepo
+    type: string
+    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  steps:
+  - name: gradle-build
+    workingDir: /workspace/git-managers/galasa-managers-parent
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - gradle
+    - --no-daemon
+    - --console 
+    - plain
+    - -PsourceMaven=$(params.extensionsSourceRepo)
+    - -PcentralMaven=$(params.mavenCentralRepo)
+    - -PtargetMaven=/workspace/git-managers/docker/repo
+    - publish
+  - name: docker-build
+    workingDir: /workspace/git-managers/docker
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./Dockerfile
+    - --context=/workspace/git-managers/docker
+    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-managers:$(params.version)-$(params.branch)
+    - --oci-layout-path=/workspace/git-managers/docker/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=extensionsVersion=$(params.extensionsVersion)
+    - --build-arg=branch=$(params.branch)
+    - --build-arg=gitHash=$(resources.inputs.git-managers.commit)

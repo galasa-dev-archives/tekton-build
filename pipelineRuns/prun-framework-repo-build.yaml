@@ -1,0 +1,22 @@
+kind: PipelineRun
+apiVersion: tekton.dev/v1beta1
+metadata:
+  generateName: framework-repo-build-
+spec:
+  params:
+  - name: branch
+    value: main
+  - name: version
+    value: 0.16.0
+  - name: mavenVersion
+    value: 0.15.0
+  pipelineRef:
+    name: framework-repo-build
+  serviceAccountName: build-bot
+  resources:
+  - name: git-framework
+    resourceRef:
+      name: git-framework-main
+  podTemplate:
+    nodeSelector:
+      beta.kubernetes.io/arch: amd64

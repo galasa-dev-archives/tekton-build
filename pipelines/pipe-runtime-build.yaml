@@ -1,0 +1,102 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: runtime-build
+spec:
+  resources:
+  - name: git-framework
+    type: git
+  - name: git-extensions
+    type: git
+  - name: git-managers
+    type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  - name: mavenVersion
+    type: string
+  tasks:
+  - name: framework-build
+    taskRef:
+      name: framework-repo-build
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: mavenVersion
+      value: $(params.mavenVersion)
+    - name: mavenSourceRepo
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/maven
+    resources:
+      inputs:
+      - name: git-framework
+        resource: git-framework
+  - name: recycle-framework
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - framework-build
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.branch)-framework
+  - name: extensions-build
+    taskRef:
+      name: extensions-repo-build
+    runAfter:
+    - recycle-framework
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: frameworkVersion
+      value: $(params.version)
+    - name: frameworkSourceRepo
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/framework/
+    resources:
+      inputs:
+      - name: git-extensions
+        resource: git-extensions
+  - name: recycle-extensions
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - extensions-build
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.branch)-extensions
+  - name: managers-build
+    taskRef:
+      name: managers-repo-build
+    runAfter:
+    - recycle-extensions
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: extensionsVersion
+      value: $(params.version)
+    - name: extensionsSourceRepo
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/extensions/
+    resources:
+      inputs:
+      - name: git-managers
+        resource: git-managers
+  - name: recycle-manager
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - managers-build
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.branch)-managers

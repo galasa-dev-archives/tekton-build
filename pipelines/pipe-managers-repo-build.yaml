@@ -1,0 +1,40 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: managers-repo-build
+spec:
+  resources:
+  - name: git-managers
+    type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  tasks:
+  - name: managers
+    taskRef:
+      name: managers-repo-build
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: extensionsVersion
+      value: $(params.version)
+    - name: extensionsSourceRepo
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/extensions/
+    resources:
+      inputs:
+      - name: git-managers
+        resource: git-managers
+  - name: recycle-deployment
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - managers
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.branch)-managers
