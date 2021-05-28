@@ -1,0 +1,22 @@
+kind: PipelineRun
+apiVersion: tekton.dev/v1beta1
+metadata:
+  generateName: maven-repo-build-
+spec:
+  params:
+  - name: branch
+    value: main
+  - name: version
+    value: 0.15.0
+  - name: gradleVersion
+    value: 0.15.0
+  pipelineRef:
+    name: maven-repo-build
+  serviceAccountName: build-bot
+  resources:
+  - name: git-maven
+    resourceRef:
+      name: git-maven-main
+  podTemplate:
+    nodeSelector:
+      beta.kubernetes.io/arch: amd64

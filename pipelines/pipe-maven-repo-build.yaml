@@ -1,36 +1,40 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: gradle-repo-build
+  name: maven-repo-build
 spec:
   resources:
-  - name: git-gradle
+  - name: git-maven
     type: git
   params:
   - name: branch
     type: string
   - name: version
     type: string
+  - name: gradleVersion
+    type: string
   tasks:
-  - name: gradle
+  - name: maven
     taskRef:
-      name: gradle-repo-build
+      name: maven-repo-build
     params:
     - name: branch
       value: $(params.branch)
     - name: version
       value: $(params.version)
+    - name: gradleVersion
+      value: $(params.gradleVersion)
     resources:
       inputs:
-      - name: git-gradle
-        resource: git-gradle
+      - name: git-maven
+        resource: git-maven
   - name: recycle-deployment
     taskRef:
       name: recycle-deployment
     runAfter:
-    - gradle
+    - maven
     params:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-gradle
+      value: maven-$(params.branch)-maven
