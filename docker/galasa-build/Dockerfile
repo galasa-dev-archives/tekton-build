@@ -42,7 +42,8 @@ ENV PATH=$PATH:/opt/node/node-v12.21.0-linux-x64/bin
 
 # Installing kubectl
 RUN mkdir -p /opt/k8s/bin
-RUN curl -LO https://dl.k8s.io/release/v1.20.0/bin/linux/amd64/kubectl -o /opt/k8s/bin/kubectl
+RUN curl -L https://dl.k8s.io/release/v1.20.0/bin/linux/amd64/kubectl -o /opt/k8s/bin/kubectl
+RUN chmod +x /opt/k8s/bin/kubectl
 ENV PATH=$PATH:/opt/k8s/bin
 
 #RUN mkdir /workspace
