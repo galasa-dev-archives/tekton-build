@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: gradle-repo-build
+spec:
+  resources:
+  - name: git-gradle
+    type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  tasks:
+  - name: gradle
+    taskRef:
+      name: gradle-repo-build
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    resources:
+      inputs:
+      - name: git-gradle
+        resource: git-gradle
