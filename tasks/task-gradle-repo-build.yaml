@@ -47,7 +47,7 @@ spec:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-gradle/docker
-    - --destination=$(params.dockerRepo)/galasadev/galasa-$(params.branch)-maven-gradle:$(params.version)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-$(params.branch)-maven-gradle:$(params.version)-$(params.branch)
     - --oci-layout-path=/workspace/git-gradle/docker/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
