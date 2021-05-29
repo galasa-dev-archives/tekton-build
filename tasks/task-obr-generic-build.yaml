@@ -1,0 +1,74 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: obr-generic-build
+spec:
+  resources:
+    inputs:
+      - name: git-docker
+        type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  - name: mavenCentralRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: obrSourceRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: dockerRepo
+    type: string
+    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  steps:
+  - name: obr-embed
+    workingDir: /workspace/git-docker/obrGeneric
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - mvn
+    - -Dgalasa.source.repo=$(params.obrSourceRepo)
+    - -Dgalasa.central.repo=$(params.mavenCentralRepo)
+    - --settings
+    - /workspace/git-docker/settings.xml
+    - -B
+    - -e
+    - -fae
+    - process-sources
+    - dev.galasa:galasa-maven-plugin:0.15.0:obrembedded
+  - name: generic-docker-build
+    workingDir: /workspace/git-docker/obrGeneric
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./Dockerfile
+    - --context=/workspace/git-docker/obrGeneric
+    - --destination=$(params.dockerRepo)/galasadev/galasa-obr-generic:$(params.version)-$(params.branch)
+    - --oci-layout-path=/workspace/git-docker/obrGeneric/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+  - name: amd64-docker-build
+    workingDir: /workspace/git-docker/bootEmbedded
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./Dockerfile
+    - --context=/workspace/git-docker/bootEmbedded
+    - --destination=$(params.dockerRepo)/galasadev/galasa-boot-embedded-amd64:$(params.version)-$(params.branch)
+    - --oci-layout-path=/workspace/git-docker/obrGeneric/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=obrVersion=$(params.version)
+    - --build-arg=branch=$(params.branch)
+    - --build-arg=jdkImage=library/openjdk:8-jdk

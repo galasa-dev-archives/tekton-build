@@ -26,6 +26,9 @@ spec:
   - name: git-obr
     resourceRef:
       name: git-obr-main
+  - name: git-docker
+    resourceRef:
+      name: git-docker-main
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64

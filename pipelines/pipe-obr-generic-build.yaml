@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: obr-generic-build
+spec:
+  resources:
+  - name: git-docker
+    type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  tasks:
+  - name: obr-build
+    taskRef:
+      name: obr-generic-build
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: obrSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    resources:
+      inputs:
+      - name: git-docker
+        resource: git-docker

@@ -12,6 +12,8 @@ spec:
     type: git
   - name: git-obr
     type: git
+  - name: git-docker
+    type: git
   params:
   - name: branch
     type: string
@@ -132,4 +134,21 @@ spec:
       value: galasa-prod
     - name: deployment
       value: maven-$(params.branch)-obr
-
+  - name: obr-embedded
+    taskRef:
+      name: obr-generic-build
+    runAfter:
+    - recycle-obr
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: obrSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    resources:
+      inputs:
+      - name: git-docker
+        resource: git-docker
