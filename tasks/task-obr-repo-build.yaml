@@ -1,0 +1,76 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: obr-repo-build
+spec:
+  resources:
+    inputs:
+      - name: git-obr
+        type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  - name: managersVersion
+    type: string
+  - name: mavenCentralRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: managersSourceRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: dockerRepo
+    type: string
+    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  steps:
+  - name: bom-build
+    workingDir: /workspace/git-obr/galasa-bom
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - mvn
+    - -Dgpg.skip=true
+    - -Dgalasa.release.repo=file:/workspace/git-obr/docker/repo/
+    - -Dgalasa.source.repo=$(params.managersSourceRepo)
+    - -Dgalasa.central.repo=$(params.mavenCentralRepo)
+    - --settings
+    - /workspace/git-obr/settings.xml
+    - -B
+    - -e
+    - -fae
+    - deploy
+  - name: obr-build
+    workingDir: /workspace/git-obr/dev.galasa.uber.obr
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - mvn
+    - -Dgpg.skip=true
+    - -Dgalasa.release.repo=file:/workspace/git-obr/docker/repo/
+    - -Dgalasa.source.repo=$(params.managersSourceRepo)
+    - -Dgalasa.central.repo=$(params.mavenCentralRepo)
+    - --settings
+    - /workspace/git-obr/settings.xml
+    - -B
+    - -e
+    - -fae
+    - deploy
+  - name: docker-build
+    workingDir: /workspace/git-obr/docker
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./Dockerfile
+    - --context=/workspace/git-obr/docker
+    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-obr:$(params.version)-$(params.branch)
+    - --oci-layout-path=/workspace/git-obr/docker/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=managersVersion=$(params.managersVersion)
+    - --build-arg=branch=$(params.branch)
+    - --build-arg=gitHash=$(resources.inputs.git-obr.commit)

@@ -12,7 +12,9 @@ ENV JAVA_HOME=/usr/local/java/jdk-11.0.12+1
 ENV PATH=$PATH:$JAVA_HOME/bin
 
 COPY ibmca.pem /usr/local/java
-RUN keytool -import -trustcacerts -alias ibmca -file /usr/local/java/ibmca.pem/ -cacerts -storepass changeit -noprompt
+COPY ibminter.pem /usr/local/java
+RUN keytool -import -trustcacerts -alias ibmca -file /usr/local/java/ibmca.pem -cacerts -storepass changeit -noprompt
+RUN keytool -import -trustcacerts -alias ibminter -file /usr/local/java/ibminter.pem -cacerts -storepass changeit -noprompt
 
 RUN java -version
 
