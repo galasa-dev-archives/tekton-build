@@ -10,6 +10,8 @@ spec:
     type: git
   - name: git-managers
     type: git
+  - name: git-obr
+    type: git
   params:
   - name: branch
     type: string
@@ -90,7 +92,7 @@ spec:
       inputs:
       - name: git-managers
         resource: git-managers
-  - name: recycle-manager
+  - name: recycle-managers
     taskRef:
       name: recycle-deployment
     runAfter:
@@ -100,3 +102,34 @@ spec:
       value: galasa-prod
     - name: deployment
       value: maven-$(params.branch)-managers
+  - name: obr-build
+    taskRef:
+      name: obr-repo-build
+    runAfter:
+    - recycle-managers
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: managersVersion
+      value: $(params.version)
+    - name: managersSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/managers/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    resources:
+      inputs:
+      - name: git-obr
+        resource: git-obr
+  - name: recycle-obr
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - obr-build
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.branch)-obr
+

@@ -23,6 +23,10 @@ spec:
   - name: git-managers
     resourceRef:
       name: git-managers-main
+  - name: git-obr
+    resourceRef:
+      name: git-obr-main
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
+      platform: hdc
