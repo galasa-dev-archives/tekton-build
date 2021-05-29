@@ -51,5 +51,10 @@ RUN curl -L https://dl.k8s.io/release/v1.20.0/bin/linux/amd64/kubectl -o /opt/k8
 RUN chmod +x /opt/k8s/bin/kubectl
 ENV PATH=$PATH:/opt/k8s/bin
 
-#RUN mkdir /workspace
+RUN mkdir -p /opt/maven/preload
+COPY pom.xml /opt/maven/preload
+WORKDIR /opt/maven/preload
+RUN mvn -B deploy && rm -rf /opt/maven/preload/target && rm -rf /opt/maven/preload/repo && rm -rf /root/.m2/repository/dev/galasa
+
+RUN mkdir /workspace
 WORKDIR /workspace
