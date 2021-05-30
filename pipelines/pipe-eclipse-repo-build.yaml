@@ -1,0 +1,54 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: eclipse-repo-build
+spec:
+  resources:
+  - name: git-eclipse
+    type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  tasks:
+  - name: eclipse-build
+    taskRef:
+      name: eclipse-repo-build
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: eclipseRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/photon/
+    - name: simplatformSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/simplatform/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: runtimeSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+    resources:
+      inputs:
+      - name: git-eclipse
+        resource: git-eclipse
+  - name: recycle-eclipse-maven
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - eclipse-build
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.branch)-eclipse
+  - name: recycle-eclipse-p2
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - eclipse-build
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: p2-$(params.branch)
