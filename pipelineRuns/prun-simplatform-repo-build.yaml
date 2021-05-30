@@ -1,0 +1,23 @@
+kind: PipelineRun
+apiVersion: tekton.dev/v1beta1
+metadata:
+  generateName: simplatform-repo-build-
+spec:
+  params:
+  - name: branch
+    value: main
+  - name: version
+    value: 0.15.0
+  - name: managersBranch
+    value: main
+  pipelineRef:
+    name: simplatform-repo-build
+  serviceAccountName: build-bot
+  resources:
+  - name: git-simplatform
+    resourceRef:
+      name: git-simplatform-main
+  podTemplate:
+    nodeSelector:
+      beta.kubernetes.io/arch: amd64
+      platform: hdc

@@ -1,0 +1,42 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: simplatform-repo-build
+spec:
+  resources:
+  - name: git-simplatform
+    type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  - name: managersBranch
+    type: string
+  tasks:
+  - name: simplatform
+    taskRef:
+      name: simplatform-repo-build
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: managersSourceRepo
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.managersBranch)/maven/managers/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    resources:
+      inputs:
+      - name: git-simplatform
+        resource: git-simplatform
+  - name: recycle-deployment
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - simplatform
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.branch)-simplatform

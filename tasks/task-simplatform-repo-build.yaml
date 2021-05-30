@@ -1,0 +1,74 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: simplatform-repo-build
+spec:
+  resources:
+    inputs:
+      - name: git-simplatform
+        type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  - name: mavenCentralRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: managersSourceRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: dockerRepo
+    type: string
+    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  steps:
+  - name: gradle-build-simplatform
+    workingDir: /workspace/git-simplatform/galasa-simplatform-application
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - mvn
+    - -Dgpg.skip=true
+    - -Dgalasa.release.repo=file:/workspace/git-simplatform/docker/repo
+    - -Dgalasa.source.repo=$(params.managersSourceRepo)
+    - -Dgalasa.central.repo=$(params.mavenCentralRepo)
+    - --settings
+    - /workspace/git-simplatform/settings.xml
+    - -B
+    - -e
+    - -fae
+    - deploy
+  - name: gradle-build-simtests
+    workingDir: /workspace/git-simplatform/galasa-simbank-tests
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - mvn
+    - -Dgpg.skip=true
+    - -Dgalasa.release.repo=file:/workspace/git-simplatform/docker/repo
+    - -Dgalasa.source.repo=$(params.managersSourceRepo)
+    - -Dgalasa.central.repo=$(params.mavenCentralRepo)
+    - --settings
+    - /workspace/git-simplatform/settings.xml
+    - -B
+    - -e
+    - -fae
+    - deploy
+  - name: docker-build
+    workingDir: /workspace/git-simplatform/docker
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./Dockerfile
+    - --context=/workspace/git-simplatform/docker
+    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-simplatform:$(params.version)-$(params.branch)
+    - --oci-layout-path=/workspace/git-simplaform/docker/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=baseVersion=0.16.0
+    - --build-arg=branch=$(params.branch)
+    - --build-arg=gitHash=$(resources.inputs.git-simplatform.commit)
