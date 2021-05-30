@@ -36,6 +36,20 @@ spec:
     - -PcentralMaven=$(params.mavenCentralRepo)
     - -PtargetMaven=/workspace/git-framework/docker/repo
     - publish
+  - name: maven-staging
+    workingDir: /workspace/git-framework/galasa-parent/galasastaging-maven-plugin
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - mvn
+    - -Dgalasa.source.repo=$(params.mavenSourceRepo)
+    - -Dgalasa.central.repo=$(params.mavenCentralRepo)
+    - -Dgalasa.release.repo=file:/workspace/git-framework/docker/repo
+    - --settings
+    - /workspace/git-framework/galasa-parent/galasastaging-maven-plugin/settings.xml
+    - -B
+    - -e
+    - -fae
+    - deploy
   - name: docker-build
     workingDir: /workspace/git-framework/docker
     image: $(params.dockerRepo)/library/kaniko-executor:latest
