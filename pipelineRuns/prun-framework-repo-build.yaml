@@ -20,3 +20,4 @@ spec:
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
+      platform: hdc

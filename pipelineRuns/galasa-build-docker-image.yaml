@@ -6,6 +6,7 @@ spec:
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
+      platform: hdc
   pipelineRef:
     name: build-publish-galasa-build
   params:
