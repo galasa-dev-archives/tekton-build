@@ -14,6 +14,8 @@ spec:
     type: git
   - name: git-docker
     type: git
+  - name: git-isolated
+    type: git
   params:
   - name: branch
     type: string
@@ -152,3 +154,67 @@ spec:
       inputs:
       - name: git-docker
         resource: git-docker
+  - name: mvp-build
+    taskRef:
+      name: mvp-build
+    runAfter:
+    - recycle-obr
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: simplatformSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/simplatform/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: runtimeSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+    - name: eclipseSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/eclipse/
+    resources:
+      inputs:
+      - name: git-isolated
+        resource: git-isolated
+  - name: recycle-mvp-maven
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - mvp-build
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.branch)-mvp
+  - name: isolated-build
+    taskRef:
+      name: isolated-build
+    runAfter:
+    - recycle-obr
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: simplatformSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/simplatform/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: runtimeSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+    - name: eclipseSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/eclipse/
+    resources:
+      inputs:
+      - name: git-isolated
+        resource: git-isolated
+  - name: recycle-isolated-maven
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - isolated-build
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.branch)-isolated

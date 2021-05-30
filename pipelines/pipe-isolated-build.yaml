@@ -1,0 +1,44 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: isolated-build
+spec:
+  resources:
+  - name: git-isolated
+    type: git
+  params:
+  - name: branch
+    type: string
+  - name: version
+    type: string
+  tasks:
+  - name: isolated-build
+    taskRef:
+      name: isolated-build
+    params:
+    - name: branch
+      value: $(params.branch)
+    - name: version
+      value: $(params.version)
+    - name: simplatformSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/simplatform/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: runtimeSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+    - name: eclipseSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/eclipse/
+    resources:
+      inputs:
+      - name: git-isolated
+        resource: git-isolated
+  - name: recycle-isolated-maven
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - isolated-build
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.branch)-isolated

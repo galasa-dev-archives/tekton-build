@@ -36,7 +36,7 @@ spec:
     - -PcentralMaven=$(params.mavenCentralRepo)
     - -PtargetMaven=/workspace/git-framework/docker/repo
     - publish
-  - name: maven-staging
+  - name: maven-staging-plugin
     workingDir: /workspace/git-framework/galasa-parent/galasastaging-maven-plugin
     image: $(params.dockerRepo)/galasa/galasa-build
     command:

@@ -29,6 +29,9 @@ spec:
   - name: git-docker
     resourceRef:
       name: git-docker-main
+  - name: git-isolated
+    resourceRef:
+      name: git-isolated-main
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64

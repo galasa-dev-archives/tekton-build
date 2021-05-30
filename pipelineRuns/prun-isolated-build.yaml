@@ -1,0 +1,21 @@
+kind: PipelineRun
+apiVersion: tekton.dev/v1beta1
+metadata:
+  generateName: isolated-build-
+spec:
+  params:
+  - name: branch
+    value: main
+  - name: version
+    value: 0.16.0
+  pipelineRef:
+    name: isolated-build
+  serviceAccountName: build-bot
+  resources:
+  - name: git-isolated
+    resourceRef:
+      name: git-isolated-main
+  podTemplate:
+    nodeSelector:
+      beta.kubernetes.io/arch: amd64
+      platform: hdc
