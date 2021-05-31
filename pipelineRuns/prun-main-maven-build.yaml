@@ -1,20 +1,22 @@
 kind: PipelineRun
 apiVersion: tekton.dev/v1beta1
 metadata:
-  generateName: mvp-build-
+  generateName: main-maven-
 spec:
   params:
-  - name: branch
+  - name: distBranch
     value: main
   - name: version
-    value: 0.16.0
+    value: 0.15.0
+  - name: gradleVersion
+    value: 0.15.0
   pipelineRef:
-    name: mvp-build
+    name: maven-repo-build
   serviceAccountName: build-bot
   resources:
-  - name: git-isolated
+  - name: git-maven
     resourceRef:
-      name: git-isolated-main
+      name: git-maven-main
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64

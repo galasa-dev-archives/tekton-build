@@ -8,7 +8,7 @@ spec:
       - name: git-eclipse
         type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
@@ -17,7 +17,7 @@ spec:
     default: 0.16.0
   - name: mavenCentralRepo
     type: string
-    default: https://repo.maven.apache.org/maven2/
+    default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
   - name: runtimeSourceRepo
     type: string
     default: https://repo.maven.apache.org/maven2/
@@ -30,6 +30,9 @@ spec:
   - name: dockerRepo
     type: string
     default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  - name: noPush
+    type: string
+    default: ""
   steps:
   - name: maven-build-eclipse
     workingDir: /workspace/git-eclipse/galasa-eclipse-parent
@@ -56,7 +59,8 @@ spec:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-eclipse/docker
-    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-eclipse:$(params.version)-$(params.branch)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-eclipse:$(params.version)-$(params.distBranch)
+    - $(params.noPush)
     - --oci-layout-path=/workspace/git-eclipse/docker/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
@@ -64,7 +68,7 @@ spec:
     - --verbosity=info
     - --build-arg=dockerRepository=$(params.dockerRepo)
     - --build-arg=baseVersion=$(params.mavenBaseVersion)
-    - --build-arg=branch=$(params.branch)
+    - --build-arg=branch=$(params.distBranch)
     - --build-arg=gitHash=$(resources.inputs.git-eclipse.commit)
   - name: docker-build-eclipse-p2
     workingDir: /workspace/git-eclipse/galasa-eclipse-parent/dev.galasa.eclipse.site
@@ -76,13 +80,14 @@ spec:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-eclipse/galasa-eclipse-parent/dev.galasa.eclipse.site
-    - --destination=$(params.dockerRepo)/galasadev/galasa-p2:$(params.version)-$(params.branch)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-p2:$(params.version)-$(params.distBranch)
+    - $(params.noPush)
     - --oci-layout-path=/workspace/git-eclipse/docker/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
     - --single-snapshot
     - --verbosity=info
     - --build-arg=dockerRepository=$(params.dockerRepo)
-    - --build-arg=branch=$(params.branch)
+    - --build-arg=branch=$(params.distBranch)
     - --build-arg=gitHash=$(resources.inputs.git-eclipse.commit)
     - --build-arg=baseVersion=$(params.mavenBaseVersion)

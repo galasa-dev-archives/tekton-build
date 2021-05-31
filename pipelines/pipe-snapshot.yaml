@@ -1,0 +1,42 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: snapshot-galasa
+spec:
+  resources:
+  - name: git-tekton
+    type: git
+  params:
+  - name: distBranch
+    type: string
+  - name: oldBranch
+    type: string
+  - name: version
+    type: string
+  tasks:
+  - name: mvp-build
+    taskRef:
+      name: mvp-build
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: oldBranch
+      value: $(params.oldBranch)
+    - name: version
+      value: $(params.version)
+    - name: image
+      value: galasa-maven-obr
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton
+#  - name: recycle-mvp-maven
+#    taskRef:
+#      name: recycle-deployment
+#    runAfter:
+#    - mvp-build
+#    params:
+#    - name: namespace
+#      value: galasa-prod
+#    - name: deployment
+#      value: maven-$(params.distBranch)-mvp

@@ -7,34 +7,53 @@ spec:
   - name: git-maven
     type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
   - name: gradleVersion
     type: string
+  - name: noPush
+    type: string
+    default: ""
+  - name: jacocoEnabled
+    type: string
+    default: "false"
+  - name: isRelease
+    type: string
+    default: "false"
   tasks:
-  - name: maven
+  - name: maven-compile
     taskRef:
       name: maven-repo-build
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: gradleVersion
       value: $(params.gradleVersion)
+    - name: noPush
+      value: $(params.noPush)
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
     resources:
       inputs:
       - name: git-maven
         resource: git-maven
-  - name: recycle-deployment
+  - name: recycle-maven
     taskRef:
       name: recycle-deployment
     runAfter:
-    - maven
+    - maven-compile
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
     params:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-maven
+      value: maven-$(params.distBranch)-maven

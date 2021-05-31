@@ -8,19 +8,22 @@ spec:
       - name: git-docker
         type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
   - name: mavenCentralRepo
     type: string
-    default: https://repo.maven.apache.org/maven2/
+    default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
   - name: obrSourceRepo
     type: string
     default: https://repo.maven.apache.org/maven2/
   - name: dockerRepo
     type: string
     default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  - name: noPush
+    type: string
+    default: ""
   steps:
   - name: obr-embed
     workingDir: /workspace/git-docker/obrGeneric
@@ -46,7 +49,8 @@ spec:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-docker/obrGeneric
-    - --destination=$(params.dockerRepo)/galasadev/galasa-obr-generic:$(params.version)-$(params.branch)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-obr-generic:$(params.version)-$(params.distBranch)
+    - $(params.noPush)
     - --oci-layout-path=/workspace/git-docker/obrGeneric/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
@@ -62,7 +66,8 @@ spec:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-docker/bootEmbedded
-    - --destination=$(params.dockerRepo)/galasadev/galasa-boot-embedded-amd64:$(params.version)-$(params.branch)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-boot-embedded-amd64:$(params.version)-$(params.distBranch)
+    - $(params.noPush)
     - --oci-layout-path=/workspace/git-docker/obrGeneric/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
@@ -70,5 +75,5 @@ spec:
     - --verbosity=info
     - --build-arg=dockerRepository=$(params.dockerRepo)
     - --build-arg=obrVersion=$(params.version)
-    - --build-arg=branch=$(params.branch)
+    - --build-arg=branch=$(params.distBranch)
     - --build-arg=jdkImage=library/openjdk:8-jdk

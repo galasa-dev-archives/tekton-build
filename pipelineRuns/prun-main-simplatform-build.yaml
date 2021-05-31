@@ -1,22 +1,22 @@
 kind: PipelineRun
 apiVersion: tekton.dev/v1beta1
 metadata:
-  generateName: framework-repo-build-
+  generateName: main-simplatform-
 spec:
   params:
-  - name: branch
+  - name: distBranch
     value: main
   - name: version
-    value: 0.16.0
-  - name: mavenVersion
     value: 0.15.0
+  - name: managersBranch
+    value: main
   pipelineRef:
-    name: framework-repo-build
+    name: simplatform-repo-build
   serviceAccountName: build-bot
   resources:
-  - name: git-framework
+  - name: git-simplatform
     resourceRef:
-      name: git-framework-main
+      name: git-simplatform-main
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64

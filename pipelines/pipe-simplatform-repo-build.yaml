@@ -7,36 +7,45 @@ spec:
   - name: git-simplatform
     type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
   - name: managersBranch
     type: string
+  - name: noPush
+    type: string
+    default: ""
   tasks:
   - name: simplatform
     taskRef:
       name: simplatform-repo-build
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: managersSourceRepo
       value: http://cicscit.hursley.ibm.com/galasadev/$(params.managersBranch)/maven/managers/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: noPush
+      value: $(params.noPush)
     resources:
       inputs:
       - name: git-simplatform
         resource: git-simplatform
-  - name: recycle-deployment
+  - name: recycle-simplatform
     taskRef:
       name: recycle-deployment
     runAfter:
     - simplatform
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
     params:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-simplatform
+      value: maven-$(params.distBranch)-simplatform

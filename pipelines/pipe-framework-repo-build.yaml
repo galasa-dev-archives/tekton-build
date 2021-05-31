@@ -7,25 +7,40 @@ spec:
   - name: git-framework
     type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
   - name: mavenVersion
     type: string
+  - name: noPush
+    type: string
+    default: ""
+  - name: jacocoEnabled
+    type: string
+    default: "false"
+  - name: isRelease
+    type: string
+    default: "false"
   tasks:
   - name: framework
     taskRef:
       name: framework-repo-build
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: mavenVersion
       value: $(params.mavenVersion)
     - name: mavenSourceRepo
-      value: http://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/maven
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/maven
+    - name: noPush
+      value: $(params.noPush)
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
     resources:
       inputs:
       - name: git-framework
@@ -35,8 +50,12 @@ spec:
       name: recycle-deployment
     runAfter:
     - framework
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
     params:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-framework
+      value: maven-$(params.distBranch)-framework

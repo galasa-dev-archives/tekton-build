@@ -8,7 +8,7 @@ spec:
       - name: git-maven
         type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
@@ -16,13 +16,22 @@ spec:
     type: string
   - name: mavenCentralRepo
     type: string
-    default: https://repo.maven.apache.org/maven2/
+    default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
   - name: mavenSourceRepo
     type: string
     default: https://repo.maven.apache.org/maven2/
   - name: dockerRepo
     type: string
     default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  - name: noPush
+    type: string
+    default: ""
+  - name: jacocoEnabled
+    type: string
+    default: "false"
+  - name: isRelease
+    type: string
+    default: "false"
   steps:
   - name: maven-build
     workingDir: /workspace/git-maven/galasa-maven-plugin
@@ -31,6 +40,8 @@ spec:
     - mvn
     - -Dgpg.skip=true
     - -Dgalasa.release.repo=file:/workspace/git-maven/docker/repo/
+    - -Dgalasa.jacocoEnabled=$(params.jacocoEnabled)
+    - -Dgalasa.isRelease=$(params.isRelease)
     - -B
     - -e
     - -fae
@@ -45,7 +56,8 @@ spec:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-maven/docker
-    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-maven:$(params.version)-$(params.branch)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-maven:$(params.version)-$(params.distBranch)
+    - $(params.noPush)
     - --oci-layout-path=/workspace/git-maven/docker/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
@@ -53,6 +65,6 @@ spec:
     - --verbosity=info
     - --build-arg=dockerRepository=$(params.dockerRepo)
     - --build-arg=gradleVersion=$(params.gradleVersion)
-    - --build-arg=branch=$(params.branch)
+    - --build-arg=branch=$(params.distBranch)
     - --build-arg=gitHash=$(resources.inputs.git-maven.commit)
     

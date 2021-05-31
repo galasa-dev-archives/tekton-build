@@ -7,19 +7,34 @@ spec:
   - name: git-gradle
     type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
+  - name: noPush
+    type: string
+    default: ""
+  - name: jacocoEnabled
+    type: string
+    default: "false"
+  - name: isRelease
+    type: string
+    default: "false"
   tasks:
-  - name: gradle
+  - name: gradle-compile
     taskRef:
       name: gradle-repo-build
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
+    - name: noPush
+      value: $(params.noPush)
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
     resources:
       inputs:
       - name: git-gradle
@@ -28,9 +43,13 @@ spec:
     taskRef:
       name: recycle-deployment
     runAfter:
-    - gradle
+    - gradle-compile
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
     params:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-gradle
+      value: maven-$(params.distBranch)-gradle

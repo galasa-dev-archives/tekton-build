@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set +e
+
+status=$(tkn -n galasa-tekton pipelinerun describe $1 -o json | jq -r .status.conditions[0].reason)
+
+echo PipelineRun status is $status
+
+if [ X$status == "XSucceeded" ] 
+then
+  exit 0
+fi
+
+if [ X$status == "XCompleted" ] 
+then
+  exit 0
+fi
+
+exit 16

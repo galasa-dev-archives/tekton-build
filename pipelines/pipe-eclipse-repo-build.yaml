@@ -7,27 +7,30 @@ spec:
   - name: git-eclipse
     type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
+  - name: noPush
+    type: string
+    default: ""
   tasks:
   - name: eclipse-build
     taskRef:
       name: eclipse-repo-build
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: eclipseRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/photon/
     - name: simplatformSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/simplatform/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     - name: runtimeSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     resources:
       inputs:
       - name: git-eclipse
@@ -41,7 +44,7 @@ spec:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-eclipse
+      value: maven-$(params.distBranch)-eclipse
   - name: recycle-eclipse-p2
     taskRef:
       name: recycle-deployment
@@ -51,4 +54,4 @@ spec:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: p2-$(params.branch)
+      value: p2-$(params.distBranch)

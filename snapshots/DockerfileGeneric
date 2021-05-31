@@ -1,0 +1,5 @@
+ARG version
+ARG dockerRepository
+ARG image
+ARG oldBranch
+FROM ${dockerRepository}/galasadev/${image}:${version}-${oldBranch}

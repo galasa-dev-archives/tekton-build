@@ -7,23 +7,28 @@ spec:
   - name: git-docker
     type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
+  - name: noPush
+    type: string
+    default: ""
   tasks:
   - name: obr-build
     taskRef:
       name: obr-generic-build
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: obrSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: noPush
+      value: $(params.noPush)
     resources:
       inputs:
       - name: git-docker

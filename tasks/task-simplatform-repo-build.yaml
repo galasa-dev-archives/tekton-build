@@ -8,19 +8,22 @@ spec:
       - name: git-simplatform
         type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
   - name: mavenCentralRepo
     type: string
-    default: https://repo.maven.apache.org/maven2/
+    default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
   - name: managersSourceRepo
     type: string
     default: https://repo.maven.apache.org/maven2/
   - name: dockerRepo
     type: string
     default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  - name: noPush
+    type: string
+    default: ""
   steps:
   - name: gradle-build-simplatform
     workingDir: /workspace/git-simplatform/galasa-simplatform-application
@@ -62,7 +65,8 @@ spec:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-simplatform/docker
-    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-simplatform:$(params.version)-$(params.branch)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-simplatform:$(params.version)-$(params.distBranch)
+    - $(params.noPush)
     - --oci-layout-path=/workspace/git-simplaform/docker/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
@@ -70,5 +74,5 @@ spec:
     - --verbosity=info
     - --build-arg=dockerRepository=$(params.dockerRepo)
     - --build-arg=baseVersion=0.16.0
-    - --build-arg=branch=$(params.branch)
+    - --build-arg=branch=$(params.distBranch)
     - --build-arg=gitHash=$(resources.inputs.git-simplatform.commit)

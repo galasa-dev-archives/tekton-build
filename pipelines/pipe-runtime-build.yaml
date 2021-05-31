@@ -17,25 +17,35 @@ spec:
   - name: git-isolated
     type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
   - name: mavenVersion
     type: string
+  - name: jacocoEnabled
+    type: string
+    default: "true"
+  - name: isRelease
+    type: string
+    default: "false"
   tasks:
   - name: framework-build
     taskRef:
       name: framework-repo-build
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: mavenVersion
       value: $(params.mavenVersion)
     - name: mavenSourceRepo
-      value: http://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/maven
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/maven
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
     resources:
       inputs:
       - name: git-framework
@@ -49,21 +59,25 @@ spec:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-framework
+      value: maven-$(params.distBranch)-framework
   - name: extensions-build
     taskRef:
       name: extensions-repo-build
     runAfter:
     - recycle-framework
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: frameworkVersion
       value: $(params.version)
     - name: frameworkSourceRepo
-      value: http://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/framework/
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/framework/
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
     resources:
       inputs:
       - name: git-extensions
@@ -77,21 +91,25 @@ spec:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-extensions
+      value: maven-$(params.distBranch)-extensions
   - name: managers-build
     taskRef:
       name: managers-repo-build
     runAfter:
     - recycle-extensions
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: extensionsVersion
       value: $(params.version)
     - name: extensionsSourceRepo
-      value: http://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/extensions/
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/extensions/
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
     resources:
       inputs:
       - name: git-managers
@@ -105,21 +123,21 @@ spec:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-managers
+      value: maven-$(params.distBranch)-managers
   - name: obr-build
     taskRef:
       name: obr-repo-build
     runAfter:
     - recycle-managers
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: managersVersion
       value: $(params.version)
     - name: managersSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/managers/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     resources:
@@ -135,19 +153,19 @@ spec:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-obr
+      value: maven-$(params.distBranch)-obr
   - name: obr-embedded
     taskRef:
       name: obr-generic-build
     runAfter:
     - recycle-obr
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: obrSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     resources:
@@ -160,18 +178,18 @@ spec:
     runAfter:
     - recycle-obr
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: simplatformSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/simplatform/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     - name: runtimeSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: eclipseSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/eclipse/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/eclipse/
     resources:
       inputs:
       - name: git-isolated
@@ -185,25 +203,25 @@ spec:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-mvp
+      value: maven-$(params.distBranch)-mvp
   - name: isolated-build
     taskRef:
       name: isolated-build
     runAfter:
     - recycle-obr
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: simplatformSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/simplatform/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     - name: runtimeSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: eclipseSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/eclipse/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/eclipse/
     resources:
       inputs:
       - name: git-isolated
@@ -217,4 +235,4 @@ spec:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-isolated
+      value: maven-$(params.distBranch)-isolated

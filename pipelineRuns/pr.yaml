@@ -1,0 +1,24 @@
+kind: PipelineRun
+apiVersion: tekton.dev/v1beta1
+metadata:
+  name: pr-managers
+spec:
+  params:
+  - name: branch
+    value: main
+  - name: version
+    value: 0.16.0
+  - name: noPush
+#    value: ""
+    value: "--no-push"
+  pipelineRef:
+    name: managers-repo-build
+  serviceAccountName: build-bot
+  resources:
+  - name: git-managers
+    resourceRef:
+      name: prres
+  podTemplate:
+    nodeSelector:
+      beta.kubernetes.io/arch: amd64
+      platform: hdc

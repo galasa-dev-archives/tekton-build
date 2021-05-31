@@ -1,20 +1,20 @@
 kind: PipelineRun
 apiVersion: tekton.dev/v1beta1
 metadata:
-  generateName: eclipse-repo-build-
+  generateName: main-obr-embedded-
 spec:
   params:
-  - name: branch
+  - name: distBranch
     value: main
   - name: version
-    value: 0.15.0
+    value: 0.16.0
   pipelineRef:
-    name: eclipse-repo-build
+    name: obr-generic-build
   serviceAccountName: build-bot
   resources:
-  - name: git-eclipse
+  - name: git-docker
     resourceRef:
-      name: git-eclipse-main
+      name: git-docker-main
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64

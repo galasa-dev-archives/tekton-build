@@ -7,27 +7,32 @@ spec:
   - name: git-isolated
     type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
+  - name: noPush
+    type: string
+    default: ""
   tasks:
   - name: isolated-build
     taskRef:
       name: isolated-build
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: simplatformSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/simplatform/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     - name: runtimeSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/obr/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: eclipseSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/eclipse/
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/eclipse/
+    - name: noPush
+      value: $(params.noPush)
     resources:
       inputs:
       - name: git-isolated
@@ -41,4 +46,4 @@ spec:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-isolated
+      value: maven-$(params.distBranch)-isolated

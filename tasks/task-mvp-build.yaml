@@ -8,13 +8,13 @@ spec:
       - name: git-isolated
         type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
   - name: mavenCentralRepo
     type: string
-    default: https://repo.maven.apache.org/maven2/
+    default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
   - name: runtimeSourceRepo
     type: string
     default: https://repo.maven.apache.org/maven2/
@@ -30,6 +30,9 @@ spec:
   - name: mavenBaseVersion
     type: string
     default: 0.16.0
+  - name: noPush
+    type: string
+    default: ""
   steps:
   - name: maven-build-mvp1
     workingDir: /workspace/git-isolated/mvp
@@ -153,7 +156,7 @@ spec:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-isolated/mvp
-    - --destination=$(params.dockerRepo)/galasadev/galasa-mvp:$(params.version)-$(params.branch)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-mvp:$(params.version)-$(params.distBranch)
     - --oci-layout-path=/workspace/git-isolated/mvp/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
@@ -173,7 +176,7 @@ spec:
     - /workspace/git-isolated/mvp/target/isolated/isolated.tar
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-isolated/mvp
-    - --destination=galasadev/galasa-mvp:$(params.version)-$(params.branch)
+    - --destination=galasadev/galasa-mvp:$(params.version)-$(params.distBranch)
     - --oci-layout-path=/workspace/git-isolated/mvp/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
@@ -209,7 +212,8 @@ spec:
     - /kaniko/executor
     - --dockerfile=./DockerfileZip
     - --context=/workspace/git-isolated/mvp
-    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-mvp:$(params.version)-$(params.branch)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-mvp:$(params.version)-$(params.distBranch)
+    - $(params.noPush)
     - --oci-layout-path=/workspace/git-isolated/mvp/image-maven-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
@@ -217,4 +221,4 @@ spec:
     - --verbosity=info
     - --build-arg=dockerRepository=$(params.dockerRepo)
     - --build-arg=baseVersion=$(params.mavenBaseVersion)
-    - --build-arg=branch=$(params.branch)
+    - --build-arg=branch=$(params.distBranch)

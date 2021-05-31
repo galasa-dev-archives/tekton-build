@@ -7,34 +7,53 @@ spec:
   - name: git-managers
     type: git
   params:
-  - name: branch
+  - name: distBranch
     type: string
   - name: version
     type: string
+  - name: noPush
+    type: string
+    default: ""
+  - name: jacocoEnabled
+    type: string
+    default: "false"
+  - name: isRelease
+    type: string
+    default: "false"
   tasks:
-  - name: managers
+  - name: managers-compile
     taskRef:
       name: managers-repo-build
     params:
-    - name: branch
-      value: $(params.branch)
+    - name: distBranch
+      value: $(params.distBranch)
     - name: version
       value: $(params.version)
     - name: extensionsVersion
       value: $(params.version)
     - name: extensionsSourceRepo
-      value: http://cicscit.hursley.ibm.com/galasadev/$(params.branch)/maven/extensions/
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/extensions/
+    - name: noPush
+      value: $(params.noPush)
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
     resources:
       inputs:
       - name: git-managers
         resource: git-managers
-  - name: recycle-deployment
+  - name: recycle-managers
     taskRef:
       name: recycle-deployment
     runAfter:
-    - managers
+    - managers-compile
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
     params:
     - name: namespace
       value: galasa-prod
     - name: deployment
-      value: maven-$(params.branch)-managers
+      value: maven-$(params.distBranch)-managers

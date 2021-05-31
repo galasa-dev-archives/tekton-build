@@ -1,0 +1,42 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: snapshot-repo
+spec:
+  resources:
+    inputs:
+      - name: git-tekton
+        type: git
+  params:
+  - name: distBranch
+    type: string
+  - name: oldBranch
+    type: string
+  - name: version
+    type: string
+  - name: image
+    type: string
+  - name: dockerRepo
+    type: string
+    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  - name: snap-obr-repo
+    workingDir: /workspace/git-tekton/snapshots
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./DockerfileRepo
+    - --context=/workspace/git-tekton/snapshots
+    - --destination=$(params.dockerRepo)/galasadev/${params.image}:$(params.version)-$(params.distBranch)
+    - --oci-layout-path=/workspace/git-framework/docker/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=image=$(params.image)
+    - --build-arg=version=$(params.version)
+    - --build-arg=branch=$(params.distBranch)
+    - --build-arg=oldBranch=$(params.oldBranch)
