@@ -16,7 +16,7 @@ spec:
   resources:
   - name: git-tekton
     resourceRef:
-      name: git-tekton-main
+      name: galasa-tekton-build
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64

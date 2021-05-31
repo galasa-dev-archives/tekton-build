@@ -14,9 +14,9 @@ spec:
   - name: version
     type: string
   tasks:
-  - name: mvp-build
+  - name: snapshot-obr
     taskRef:
-      name: mvp-build
+      name: snapshot-repo
     params:
     - name: distBranch
       value: $(params.distBranch)
