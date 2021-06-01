@@ -1,0 +1,86 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: inttests-repo-build
+spec:
+  resources:
+    inputs:
+      - name: git-inttests
+        type: git
+  params:
+  - name: distBranch
+    type: string
+  - name: version
+    type: string
+  - name: mavenCentralRepo
+    type: string
+    default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+  - name: managersSourceRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: dockerRepo
+    type: string
+    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  - name: noPush
+    type: string
+    default: ""
+  - name: bootstrap
+    type: string
+    default: "http://cicsk8sm.hursley.ibm.com:31410/bootstrap"
+  - name: skipTestCatalog
+    type: string
+    default: "false"
+  steps:
+  - name: inttests-compile
+    workingDir: /workspace/git-inttests/galasa-inttests-parent
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - gradle
+    - --no-daemon
+    - --console 
+    - plain
+    - -PsourceMaven=$(params.managersSourceRepo)
+    - -PcentralMaven=$(params.mavenCentralRepo)
+    - -PtargetMaven=/workspace/git-inttests/docker/repo
+    - publish
+    - publishToMavenLocal
+  - name: generate-obr
+    workingDir: /workspace/git-inttests/galasa-inttests-parent/dev.galasa.inttests.obr
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - mvn
+    - -Dgpg.skip=true
+    - -Dgalasa.release.repo=file:/workspace/git-inttests/docker/repo
+    - -Dgalasa.source.repo=$(params.managersSourceRepo)
+    - -Dgalasa.central.repo=$(params.mavenCentralRepo)
+    - -Dgalasa.bootstrap=$(params.bootstrap)
+    - -Dgalasa.skip.deploytestcatatlog=$(params.skipTestCatalog) 
+    - -Dgalasa.skip.bundletestcatatlog=false
+    - --settings
+    - /workspace/git-inttests/settings.xml
+    - -B
+    - -e
+    - -fae
+    - deploy
+    - dev.galasa:galasa-maven-plugin:deploytestcat
+  - name: inttests-image
+    workingDir: /workspace/git-inttests/docker
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./Dockerfile
+    - --context=/workspace/git-inttests/docker
+    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-inttests:$(params.version)-$(params.distBranch)
+    - $(params.noPush)
+    - --oci-layout-path=/workspace/git-simplaform/docker/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=baseVersion=0.16.0
+    - --build-arg=branch=$(params.distBranch)
+    - --build-arg=gitHash=$(resources.inputs.git-inttests.commit)

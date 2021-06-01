@@ -30,13 +30,97 @@ spec:
       inputs:
       - name: git-tekton
         resource: git-tekton
-#  - name: recycle-mvp-maven
-#    taskRef:
-#      name: recycle-deployment
-#    runAfter:
-#    - mvp-build
-#    params:
-#    - name: namespace
-#      value: galasa-prod
-#    - name: deployment
-#      value: maven-$(params.distBranch)-mvp
+  - name: snapshot-mvp
+    taskRef:
+      name: snapshot-repo
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: oldBranch
+      value: $(params.oldBranch)
+    - name: version
+      value: $(params.version)
+    - name: image
+      value: galasa-maven-mvp
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton
+  - name: snapshot-isolated
+    taskRef:
+      name: snapshot-repo
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: oldBranch
+      value: $(params.oldBranch)
+    - name: version
+      value: $(params.version)
+    - name: image
+      value: galasa-maven-isolated
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton
+  - name: snapshot-boot-embedded
+    taskRef:
+      name: snapshot-generic
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: oldBranch
+      value: $(params.oldBranch)
+    - name: version
+      value: $(params.version)
+    - name: image
+      value: galasa-boot-embedded-amd64
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton
+  - name: snapshot-ibm-boot-embedded
+    taskRef:
+      name: snapshot-generic
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: oldBranch
+      value: $(params.oldBranch)
+    - name: version
+      value: $(params.version)
+    - name: image
+      value: galasa-ibm-boot-embedded-amd64
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton
+  - name: recycle-obr
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - snapshot-obr
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.distBranch)-obr
+  - name: recycle-mvp
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - snapshot-mvp
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.distBranch)-mvp
+  - name: recycle-isolated
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - snapshot-isolated
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.distBranch)-isolated

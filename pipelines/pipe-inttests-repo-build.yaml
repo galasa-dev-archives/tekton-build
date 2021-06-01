@@ -1,0 +1,57 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: inttests-repo-build
+spec:
+  resources:
+  - name: git-inttests
+    type: git
+  params:
+  - name: distBranch
+    type: string
+  - name: version
+    type: string
+  - name: noPush
+    type: string
+    default: ""
+  - name: bootstrap
+    type: string
+    default: "http://cicsk8sm.hursley.ibm.com:31410/bootstrap"
+  - name: skipTestCatalog
+    type: string
+    default: "false"
+  tasks:
+  - name: inttests-compile
+    taskRef:
+      name: inttests-repo-build
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: version
+      value: $(params.version)
+    - name: managersSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
+    - name: noPush
+      value: $(params.noPush)
+    - name: bootstrap
+      value: $(params.bootstrap)
+    - name: skipTestCatalog
+      value: $(params.skipTestCatalog)
+    resources:
+      inputs:
+      - name: git-inttests
+        resource: git-inttests
+  - name: recycle-inttests
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - inttests-compile
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: maven-$(params.distBranch)-inttests

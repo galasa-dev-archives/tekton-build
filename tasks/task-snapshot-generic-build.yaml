@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: snapshot-repo
+  name: snapshot-generic
 spec:
   resources:
     inputs:
@@ -20,7 +20,7 @@ spec:
     type: string
     default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
   steps: 
-  - name: snap-repo
+  - name: snap-generic
     workingDir: /workspace/git-tekton/snapshots
     image: $(params.dockerRepo)/library/kaniko-executor:latest
     env:
@@ -28,7 +28,7 @@ spec:
       value: /tekton/home/.docker
     command:
     - /kaniko/executor
-    - --dockerfile=./DockerfileRepo
+    - --dockerfile=./DockerfileGeneric
     - --context=/workspace/git-tekton/snapshots
     - --destination=$(params.dockerRepo)/galasadev/$(params.image):$(params.version)-$(params.distBranch)
     - --oci-layout-path=/workspace/git-framework/docker/image-digest
