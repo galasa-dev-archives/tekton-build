@@ -55,7 +55,16 @@ spec:
     - -e
     - -fae
     - deploy
-  - name: docker-build
+  - name: get-commit
+    workingDir: /workspace/git-simplatform
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - git
+    - log
+    - '--format="%H"'
+    - -n
+    - "1"
+  - name: build-repo-image
     workingDir: /workspace/git-simplatform/docker
     image: $(params.dockerRepo)/library/kaniko-executor:latest
     env:
@@ -76,3 +85,22 @@ spec:
     - --build-arg=baseVersion=0.16.0
     - --build-arg=branch=$(params.distBranch)
     - --build-arg=gitHash=$(resources.inputs.git-simplatform.commit)
+  - name: build-jar-image
+    workingDir: /workspace/git-simplatform/galasa-simplatform-application/galasa-simplatform-3270
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./Dockerfile
+    - --context=/workspace/git-simplatform/galasa-simplatform-application/galasa-simplatform-3270
+    - --destination=$(params.dockerRepo)/galasadev/galasa-simplatform:$(params.version)-$(params.distBranch)
+    - $(params.noPush)
+    - --oci-layout-path=/workspace/git-simplaform/docker/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=jdkImage=library/openjdk:8-jdk
