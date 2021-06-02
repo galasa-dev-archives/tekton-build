@@ -33,4 +33,4 @@ spec:
     - status
     - deployment/$(params.deployment)
     - -w
-    - --timeout=1m
+    - --timeout=3m
