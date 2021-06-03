@@ -1,0 +1,54 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: recycle-prod
+spec:
+  tasks:
+  - name: recycle-api
+    taskRef:
+      name: recycle-deployment
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: api
+  - name: recycle-testcatalog
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - recycle-api
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: testcatalog
+  - name: recycle-engine-controller
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - recycle-api
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: engine-controller
+  - name: recycle-resource-monitor
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - recycle-api
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: resource-monitor
+  - name: recycle-metrics
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - recycle-api
+    params:
+    - name: namespace
+      value: galasa-prod
+    - name: deployment
+      value: metrics

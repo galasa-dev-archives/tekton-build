@@ -1,0 +1,76 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: openapi-repo-build
+spec:
+  resources:
+    inputs:
+      - name: git-openapi
+        type: git
+        targetPath: openapi
+      - name: git-openapi-go
+        type: git
+        targetPath: openapi-go
+  params:
+  steps:
+  - name: generate-api-runs
+    workingDir: /workspace/openapi
+    image: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasa/galasa-build
+    command:
+    - java 
+    - -jar 
+    - /opt/openapi/openapi-generator-cli.jar
+    - generate
+    - -g
+    - go
+    - --package-name
+    - runs
+    - --git-repo-id=openapi-go
+    - --git-user-id=galasa-dev
+    - --additional-properties=packageVersion=0.16.0
+    - --additional-properties=isGoSubmodule=true
+    - -i
+    - /workspace/openapi/galasa-api-runs.yaml
+    - -o
+    - /workspace/openapi-go/runs
+  - name: git-email
+    workingDir: /workspace/openapi-go
+    image: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasa/galasa-build
+    command:
+    - git 
+    - config
+    - user.email
+    - "'cicsdeliverytest@uk.com'"
+  - name: git-user
+    workingDir: /workspace/openapi-go
+    image: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasa/galasa-build
+    command:
+    - git 
+    - config
+    - user.name
+    - "'Automation'"
+  - name: git-add
+    workingDir: /workspace/openapi-go
+    image: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasa/galasa-build
+    command:
+    - git 
+    - add
+    - -v
+    - '.'
+  - name: git-commit
+    workingDir: /workspace/openapi-go
+    image: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasa/galasa-build
+    command:
+    - git 
+    - commit
+    - -m
+    - "'openapi generate update'"
+  - name: git-push
+    workingDir: /workspace/openapi-go
+    image: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasa/galasa-build
+    command:
+    - git 
+    - push
+    - origin
+    - main    
+
