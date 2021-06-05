@@ -33,7 +33,19 @@ spec:
   - name: isRelease
     type: string
     default: "false"
+  results:
+  - name: image
+    description: The image produced by this build
   steps:
+  - name: get-commit
+    workingDir: /workspace/git-gradle
+    image: $(params.dockerRepo)/galasa/galasa-build
+    script: |
+      #!/bin/sh
+      set +e
+      COMMIT="$(git log --format="%H" -n 1)"
+      echo $COMMIT > /workspace/git-gradle/docker/gradle.githash
+      echo commit is $COMMIT
   - name: gradle-build
     workingDir: /workspace/git-gradle
     image: $(params.dockerRepo)/galasa/galasa-build
@@ -68,4 +80,9 @@ spec:
     - --build-arg=dockerRepository=$(params.dockerRepo)
     - --build-arg=baseVersion=$(params.mavenBaseVersion)
     - --build-arg=branch=$(params.distBranch)
-    - --build-arg=gitHash=$(resources.inputs.git-gradle.commit)
+  - name: report-result
+    image: $(params.dockerRepo)/galasa/galasa-build
+    script: |
+      #!/bin/sh
+      set +e
+      echo "galasa-maven-gradle:$(params.version)-$(params.distBranch)" > /tekton/results/image

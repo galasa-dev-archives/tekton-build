@@ -7,5 +7,7 @@ spec:
   params:
   - name: revision
     value: main
+  - name: refspec
+    value: +refs/heads/main:refs/heads/main
   - name: url
     value: https://github.com/galasa-dev/gradle
