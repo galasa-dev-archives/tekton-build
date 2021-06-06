@@ -71,5 +71,11 @@ COPY pom.xml /opt/maven/preload
 WORKDIR /opt/maven/preload
 RUN mvn -B deploy && rm -rf /opt/maven/preload/target && rm -rf /opt/maven/preload/repo && rm -rf /root/.m2/repository/dev/galasa
 
+# Installing galasabld
+RUN mkdir -p /opt/galasa/bin
+RUN curl -L http://cicscit.hursley.ibm.com/galasadev/buildutils/galasabld-linux-amd64 -o /opt/galasa/bin/galasabld
+RUN chmod +x /opt/galasa/bin/galasabld
+ENV PATH=$PATH:/opt/galasa/bin
+
 RUN mkdir /workspace
 WORKDIR /workspace
