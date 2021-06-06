@@ -1,0 +1,45 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: galasabld-build
+spec:
+  resources:
+  - name: git-tekton
+    type: git
+  params:
+  - name: distBranch
+    type: string
+  - name: version
+    type: string
+  - name: noPush
+    type: string
+    default: ""
+  tasks:
+  - name: galasabld
+    taskRef:
+      name: galasabld-build
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: version
+      value: $(params.version)
+    - name: noPush
+      value: $(params.noPush)
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton
+#  - name: recycle-galasabld
+#    taskRef:
+#      name: recycle-deployment
+#    runAfter:
+#    - framework
+#    when:
+#    - input: "$(params.noPush)"
+#      operator: notin
+#      values: ["--no-push"]
+#    params:
+#    - name: namespace
+#      value: galasa-prod
+#   - name: deployment
+#      value: galasabld-$(params.distBranch)

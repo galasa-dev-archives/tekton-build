@@ -1,0 +1,51 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: galasabld-build
+spec:
+  resources:
+    inputs:
+    - name: git-tekton
+      type: git
+  params:
+  - name: distBranch
+    type: string
+  - name: version
+    type: string
+  - name: dockerRepo
+    type: string
+    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  - name: noPush
+    type: string
+    default: ""
+  steps:
+  - name: cat
+    workingDir: /workspace/git-tekton
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - ls
+    - -al
+  - name: galasabld-build
+    workingDir: /workspace/git-tekton/buildUtilities
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - make
+    - all
+  - name: docker-build
+    workingDir: /workspace/git-tekton/buildUtilities
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./Dockerfile
+    - --context=/workspace/git-tekton/buildUtilities
+    - --destination=$(params.dockerRepo)/galasadev/galasa-buildutilities:$(params.version)-$(params.distBranch)
+    - $(params.noPush)
+    - --oci-layout-path=/workspace/git-framework/docker/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.dockerRepo)

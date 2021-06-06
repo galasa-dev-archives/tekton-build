@@ -1,8 +1,11 @@
 FROM nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/library/ubuntu:latest
 
+ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/London"
 RUN apt-get update && apt-get install -y unzip \
     curl \
     xz-utils \
+    golang \
+    make \
     gpg && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Installing Java 11
