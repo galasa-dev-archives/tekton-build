@@ -101,7 +101,7 @@ spec:
     - snapshot-obr
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-obr
   - name: recycle-mvp
@@ -111,7 +111,7 @@ spec:
     - snapshot-mvp
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-mvp
   - name: recycle-isolated
@@ -121,6 +121,6 @@ spec:
     - snapshot-isolated
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-isolated

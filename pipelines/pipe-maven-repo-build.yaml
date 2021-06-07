@@ -54,6 +54,6 @@ spec:
       values: ["--no-push"]
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-maven

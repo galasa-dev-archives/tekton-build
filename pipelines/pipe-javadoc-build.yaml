@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: obr-repo-build
+  name: javadoc-build
 spec:
   resources:
   - name: git-obr
@@ -15,15 +15,13 @@ spec:
     type: string
     default: ""
   tasks:
-  - name: obr-build
+  - name: javadoc-build
     taskRef:
-      name: obr-repo-build
+      name: javadoc-build
     params:
     - name: distBranch
       value: $(params.distBranch)
     - name: version
-      value: $(params.version)
-    - name: managersVersion
       value: $(params.version)
     - name: managersSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
@@ -35,17 +33,17 @@ spec:
       inputs:
       - name: git-obr
         resource: git-obr
-  - name: recycle-obr
-    taskRef:
-      name: recycle-deployment
-    runAfter:
-    - obr-build
-    when:
-    - input: "$(params.noPush)"
-      operator: notin
-      values: ["--no-push"]
-    params:
-    - name: namespace
-      value: galasa-development
-    - name: deployment
-      value: maven-$(params.distBranch)-obr
+#  - name: recycle-obr
+#    taskRef:
+#      name: recycle-deployment
+#    runAfter:
+#    - obr-build
+#    when:
+#    - input: "$(params.noPush)"
+#      operator: notin
+#      values: ["--no-push"]
+#    params:
+#    - name: namespace
+#      value: galasa-development
+#    - name: deployment
+#      value: maven-$(params.distBranch)-obr

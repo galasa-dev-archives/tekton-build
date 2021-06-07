@@ -44,6 +44,6 @@ spec:
     - isolated-build
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-isolated

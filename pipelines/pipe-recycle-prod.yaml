@@ -9,7 +9,7 @@ spec:
       name: recycle-deployment
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: api
   - name: recycle-testcatalog
@@ -19,7 +19,7 @@ spec:
     - recycle-api
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: testcatalog
   - name: recycle-engine-controller
@@ -29,7 +29,7 @@ spec:
     - recycle-api
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: engine-controller
   - name: recycle-resource-monitor
@@ -39,7 +39,7 @@ spec:
     - recycle-api
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: resource-monitor
   - name: recycle-metrics
@@ -49,6 +49,6 @@ spec:
     - recycle-api
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: metrics

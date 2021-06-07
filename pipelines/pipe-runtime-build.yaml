@@ -57,7 +57,7 @@ spec:
     - framework-build
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-framework
   - name: extensions-build
@@ -89,7 +89,7 @@ spec:
     - extensions-build
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-extensions
   - name: managers-build
@@ -121,7 +121,7 @@ spec:
     - managers-build
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-managers
   - name: obr-build
@@ -151,7 +151,7 @@ spec:
     - obr-build
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-obr
   - name: obr-embedded
@@ -201,7 +201,7 @@ spec:
     - mvp-build
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-mvp
   - name: isolated-build
@@ -233,6 +233,6 @@ spec:
     - isolated-build
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-isolated
