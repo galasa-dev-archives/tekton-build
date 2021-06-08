@@ -33,17 +33,31 @@ spec:
       inputs:
       - name: git-obr
         resource: git-obr
-#  - name: recycle-obr
-#    taskRef:
-#      name: recycle-deployment
-#    runAfter:
-#    - obr-build
-#    when:
-#    - input: "$(params.noPush)"
-#      operator: notin
-#      values: ["--no-push"]
-#    params:
-#    - name: namespace
-#      value: galasa-development
-#    - name: deployment
-#      value: maven-$(params.distBranch)-obr
+  - name: recycle-javadoc
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - javadoc-build
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: maven-$(params.distBranch)-javadoc
+  - name: recycle-apidoc
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - javadoc-build
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: maven-$(params.distBranch)-apidocs

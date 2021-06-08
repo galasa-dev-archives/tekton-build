@@ -172,11 +172,49 @@ spec:
       inputs:
       - name: git-docker
         resource: git-docker
+  - name: javadoc-build
+    taskRef:
+      name: javadoc-build
+    runAfter:
+    - recycle-obr
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: version
+      value: $(params.version)
+    - name: managersSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    resources:
+      inputs:
+      - name: git-obr
+        resource: git-obr
+  - name: recycle-javadoc
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - javadoc-build
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: maven-$(params.distBranch)-javadoc
+  - name: recycle-apidoc
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - javadoc-build
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: maven-$(params.distBranch)-apidocs
   - name: mvp-build
     taskRef:
       name: mvp-build
     runAfter:
-    - recycle-obr
+    - recycle-javadoc
     params:
     - name: distBranch
       value: $(params.distBranch)
@@ -194,6 +232,8 @@ spec:
       inputs:
       - name: git-isolated
         resource: git-isolated
+      - name: git-obr
+        resource: git-obr
   - name: recycle-mvp-maven
     taskRef:
       name: recycle-deployment
@@ -208,7 +248,7 @@ spec:
     taskRef:
       name: isolated-build
     runAfter:
-    - recycle-obr
+    - recycle-javadoc
     params:
     - name: distBranch
       value: $(params.distBranch)
@@ -226,6 +266,8 @@ spec:
       inputs:
       - name: git-isolated
         resource: git-isolated
+      - name: git-obr
+        resource: git-obr
   - name: recycle-isolated-maven
     taskRef:
       name: recycle-deployment
