@@ -77,5 +77,5 @@ RUN curl -L http://cicscit.hursley.ibm.com/galasadev/buildutils/galasabld-linux-
 RUN chmod +x /opt/galasa/bin/galasabld
 ENV PATH=$PATH:/opt/galasa/bin
 
-RUN mkdir /workspace
+RUN mkdir -p /workspace
 WORKDIR /workspace
