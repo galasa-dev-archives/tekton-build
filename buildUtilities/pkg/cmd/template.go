@@ -137,7 +137,7 @@ func execute(cmd *cobra.Command, args []string) {
 		selected := false
 		
 		if requireObr {
-			selected = true
+			selected = bundle.Obr
 		} else if requireBom {
 			selected = bundle.Bom
 		} else if requireMvp {
@@ -172,7 +172,7 @@ func execute(cmd *cobra.Command, args []string) {
 		selected := false
 		
 		if requireObr {
-			selected = true
+			selected = bundle.Obr
 		} else if requireBom {
 			selected = bundle.Bom
 		} else if requireMvp {
@@ -207,7 +207,7 @@ func execute(cmd *cobra.Command, args []string) {
 		selected := false
 		
 		if requireObr {
-			selected = true
+			selected = bundle.Obr
 		} else if requireBom {
 			selected = bundle.Bom
 		} else if requireMvp {
