@@ -209,7 +209,7 @@ func execute(cmd *cobra.Command, args []string) {
 		if requireObr {
 			selected = true
 		} else if requireBom {
-			selected = true
+			selected = bundle.Bom
 		} else if requireMvp {
 			selected = bundle.Mvp 
 		} else if requireIsolated {
