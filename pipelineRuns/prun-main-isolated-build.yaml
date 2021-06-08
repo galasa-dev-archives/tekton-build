@@ -15,6 +15,9 @@ spec:
   - name: git-isolated
     resourceRef:
       name: git-isolated-main
+  - name: git-obr
+    resourceRef:
+      name: git-obr-main
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64

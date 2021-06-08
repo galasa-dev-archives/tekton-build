@@ -6,6 +6,8 @@ spec:
   resources:
   - name: git-isolated
     type: git
+  - name: git-obr
+    type: git
   params:
   - name: distBranch
     type: string
@@ -37,6 +39,8 @@ spec:
       inputs:
       - name: git-isolated
         resource: git-isolated
+      - name: git-obr
+        resource: git-obr
   - name: mvp-build
     taskRef:
       name: mvp-build
@@ -59,3 +63,5 @@ spec:
       inputs:
       - name: git-isolated
         resource: git-isolated
+      - name: git-obr
+        resource: git-obr

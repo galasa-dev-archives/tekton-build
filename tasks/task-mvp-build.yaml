@@ -7,6 +7,8 @@ spec:
     inputs:
       - name: git-isolated
         type: git
+      - name: git-obr
+        type: git
   params:
   - name: distBranch
     type: string
@@ -34,6 +36,19 @@ spec:
     type: string
     default: ""
   steps:
+  - name: generate-pom
+    workingDir: /workspace/git-isolated/mvp
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - galasabld 
+    - template 
+    - --releaseMetadata
+    - /workspace/git-obr/release.yaml 
+    - --template
+    - pom.template 
+    - --output
+    - pom.xml 
+    - --mvp
   - name: maven-build-mvp1
     workingDir: /workspace/git-isolated/mvp
     image: $(params.dockerRepo)/galasa/galasa-build
@@ -50,6 +65,8 @@ spec:
     - -B
     - -e
     - -fae
+    - -f
+    - pom2.xml
     - process-sources
   - name: maven-build-mvp2
     workingDir: /workspace/git-isolated/mvp
@@ -68,7 +85,7 @@ spec:
     - -e
     - -fae
     - -f
-    - pom2.xml
+    - pom.xml
     - process-sources
   - name: maven-build-mvp3
     workingDir: /workspace/git-isolated/mvp
