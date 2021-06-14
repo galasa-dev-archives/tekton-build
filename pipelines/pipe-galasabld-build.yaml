@@ -29,17 +29,17 @@ spec:
       inputs:
       - name: git-tekton
         resource: git-tekton
-#  - name: recycle-galasabld
-#    taskRef:
-#      name: recycle-deployment
-#    runAfter:
-#    - framework
-#    when:
-#    - input: "$(params.noPush)"
-#      operator: notin
-#      values: ["--no-push"]
-#    params:
-#    - name: namespace
-#      value: galasa-development
-#   - name: deployment
-#      value: galasabld-$(params.distBranch)
+  - name: recycle-galasabld
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - galasabld
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: galasa-buildutilities

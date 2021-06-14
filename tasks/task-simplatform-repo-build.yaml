@@ -95,7 +95,7 @@ spec:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-simplatform/galasa-simplatform-application/galasa-simplatform-3270
-    - --destination=$(params.dockerRepo)/galasadev/galasa-simplatform:$(params.version)-$(params.distBranch)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-simplatform-amd64:$(params.version)-$(params.distBranch)
     - $(params.noPush)
     - --oci-layout-path=/workspace/git-simplaform/docker/image-digest
     - --skip-tls-verify

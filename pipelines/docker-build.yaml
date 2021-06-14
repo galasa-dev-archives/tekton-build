@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: docker-build
+spec:
+  resources:
+  - name: git-tekton
+    type: git
+  tasks:
+    - name: build-build-image
+      taskRef:
+        name: docker-build
+      resources:
+        inputs:
+        - name: git-tekton
+          resource: git-tekton

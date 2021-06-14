@@ -228,6 +228,10 @@ spec:
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: eclipseSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/eclipse/
+    - name: javadocSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/javadoc/
+    - name: docsSourceRepo
+      value: https://nexus.galasa.dev/repository/docs/
     resources:
       inputs:
       - name: git-isolated
@@ -262,6 +266,10 @@ spec:
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: eclipseSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/eclipse/
+    - name: javadocSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/javadoc/
+    - name: docsSourceRepo
+      value: https://nexus.galasa.dev/repository/docs/
     resources:
       inputs:
       - name: git-isolated
@@ -278,3 +286,21 @@ spec:
       value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-isolated
+  - name: docker-operator-build
+    taskRef:
+      name: docker-operator-build
+    runAfter:
+    - recycle-extensions
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: version
+      value: $(params.version)
+    - name: extensionsSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/extensions/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    resources:
+      inputs:
+      - name: git-docker
+        resource: git-docker

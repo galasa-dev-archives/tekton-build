@@ -33,6 +33,10 @@ spec:
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: eclipseSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/eclipse/
+    - name: javadocSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/javadoc/
+    - name: docsSourceRepo
+      value: https://nexus.galasa.dev/repository/docs/
     - name: noPush
       value: $(params.noPush)
     resources:
@@ -57,6 +61,10 @@ spec:
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: eclipseSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/eclipse/
+    - name: javadocSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/javadoc/
+    - name: docsSourceRepo
+      value: https://nexus.galasa.dev/repository/docs/
     - name: noPush
       value: $(params.noPush)
     resources:

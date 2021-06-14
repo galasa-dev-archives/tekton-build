@@ -46,6 +46,21 @@ spec:
     - -e
     - -fae
     - deploy
+  - name: delete-plugin-metadata
+    workingDir: /workspace/git-maven/docker/repo/dev/galasa
+    image: $(params.dockerRepo)/galasa/galasa-build
+    script: |
+      #!/bin/sh
+      rm maven-metadata*
+  - name: get-commit
+    workingDir: /workspace/git-maven
+    image: $(params.dockerRepo)/galasa/galasa-build
+    script: |
+      #!/bin/sh
+      set +e
+      COMMIT="$(git log --format="%H" -n 1)"
+      echo $COMMIT > /workspace/git-maven/docker/maven.githash
+      echo commit is $COMMIT
   - name: docker-build
     workingDir: /workspace/git-maven/docker
     image: $(params.dockerRepo)/library/kaniko-executor:latest

@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: galasa-build-
+spec:
+  podTemplate:
+    nodeSelector:
+      beta.kubernetes.io/arch: amd64
+      platform: hdc
+  pipelineRef:
+    name: docker-build
+  serviceAccountName: build-bot
+  resources:
+  - name: git-tekton
+    resourceRef:
+      name: galasa-tekton-build

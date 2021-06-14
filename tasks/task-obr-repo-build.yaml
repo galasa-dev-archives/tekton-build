@@ -27,6 +27,25 @@ spec:
     type: string
     default: ""
   steps:
+  - name: generate-bom
+    workingDir: /workspace/git-obr/galasa-bom
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - galasabld 
+    - template 
+    - --releaseMetadata
+    - ../release.yaml 
+    - --template
+    - pom.template 
+    - --output
+    - pom.xml 
+    - --bom
+  - name: list-bom
+    workingDir: /workspace/git-obr/galasa-bom
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - cat
+    - pom.xml
   - name: bom-build
     workingDir: /workspace/git-obr/galasa-bom
     image: $(params.dockerRepo)/galasa/galasa-build
@@ -42,6 +61,25 @@ spec:
     - -e
     - -fae
     - deploy
+  - name: generate-obr
+    workingDir: /workspace/git-obr/dev.galasa.uber.obr
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - galasabld 
+    - template 
+    - --releaseMetadata
+    - ../release.yaml 
+    - --template
+    - pom.template 
+    - --output
+    - pom.xml 
+    - --obr
+  - name: list-obr
+    workingDir: /workspace/git-obr/dev.galasa.uber.obr
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - cat
+    - pom.xml
   - name: obr-build
     workingDir: /workspace/git-obr/dev.galasa.uber.obr
     image: $(params.dockerRepo)/galasa/galasa-build

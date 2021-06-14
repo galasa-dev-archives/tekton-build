@@ -26,6 +26,12 @@ spec:
   - name: eclipseSourceRepo
     type: string
     default: http://download.eclipse.org/releases/photon
+  - name: javadocSourceRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: docsSourceRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
   - name: dockerRepo
     type: string
     default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
@@ -58,6 +64,8 @@ spec:
     - -Dgalasa.target.repo=file:target/isolated/maven
     - -Dgalasa.runtime.repo=$(params.runtimeSourceRepo)
     - -Dgalasa.simplatform.repo=$(params.simplatformSourceRepo)
+    - -Dgalasa.javadoc.repo=$(params.javadocSourceRepo)
+    - -Dgalasa.docs.repo=$(params.docsSourceRepo)
     - -Dgalasa.central.repo=$(params.mavenCentralRepo)
     - -Dgalasa.eclipse.repo=$(params.eclipseSourceRepo)
     - --settings
@@ -77,6 +85,8 @@ spec:
     - -Dgalasa.target.repo=file:target/isolated/maven
     - -Dgalasa.runtime.repo=$(params.runtimeSourceRepo)
     - -Dgalasa.simplatform.repo=$(params.simplatformSourceRepo)
+    - -Dgalasa.javadoc.repo=$(params.javadocSourceRepo)
+    - -Dgalasa.docs.repo=$(params.docsSourceRepo)
     - -Dgalasa.central.repo=$(params.mavenCentralRepo)
     - -Dgalasa.eclipse.repo=$(params.eclipseSourceRepo)
     - --settings
@@ -96,6 +106,8 @@ spec:
     - -Dgalasa.target.repo=file:target/isolated/maven
     - -Dgalasa.runtime.repo=$(params.runtimeSourceRepo)
     - -Dgalasa.simplatform.repo=$(params.simplatformSourceRepo)
+    - -Dgalasa.javadoc.repo=$(params.javadocSourceRepo)
+    - -Dgalasa.docs.repo=$(params.docsSourceRepo)
     - -Dgalasa.central.repo=$(params.mavenCentralRepo)
     - -Dgalasa.eclipse.repo=$(params.eclipseSourceRepo)
     - --settings
@@ -115,6 +127,8 @@ spec:
     - -Dgalasa.target.repo=file:target/isolated/maven
     - -Dgalasa.runtime.repo=$(params.runtimeSourceRepo)
     - -Dgalasa.simplatform.repo=$(params.simplatformSourceRepo)
+    - -Dgalasa.javadoc.repo=$(params.javadocSourceRepo)
+    - -Dgalasa.docs.repo=$(params.docsSourceRepo)
     - -Dgalasa.central.repo=$(params.mavenCentralRepo)
     - -Dgalasa.eclipse.repo=$(params.eclipseSourceRepo)
     - --settings
@@ -134,6 +148,8 @@ spec:
     - -Dgalasa.target.repo=file:target/isolated/maven
     - -Dgalasa.runtime.repo=$(params.runtimeSourceRepo)
     - -Dgalasa.simplatform.repo=$(params.simplatformSourceRepo)
+    - -Dgalasa.javadoc.repo=$(params.javadocSourceRepo)
+    - -Dgalasa.docs.repo=$(params.docsSourceRepo)
     - -Dgalasa.central.repo=$(params.mavenCentralRepo)
     - -Dgalasa.eclipse.repo=$(params.eclipseSourceRepo)
     - --settings
@@ -153,6 +169,8 @@ spec:
     - -Dgalasa.target.repo=file:target/isolated/maven
     - -Dgalasa.runtime.repo=$(params.runtimeSourceRepo)
     - -Dgalasa.simplatform.repo=$(params.simplatformSourceRepo)
+    - -Dgalasa.javadoc.repo=$(params.javadocSourceRepo)
+    - -Dgalasa.docs.repo=$(params.docsSourceRepo)
     - -Dgalasa.central.repo=$(params.mavenCentralRepo)
     - -Dgalasa.eclipse.repo=$(params.eclipseSourceRepo)
     - --settings
@@ -163,7 +181,7 @@ spec:
     - -f
     - pom6.xml
     - process-sources
-  - name: maven-build-isolated7
+  - name: maven-build-javadoc
     workingDir: /workspace/git-isolated/full
     image: $(params.dockerRepo)/galasa/galasa-build
     command:
@@ -172,6 +190,8 @@ spec:
     - -Dgalasa.target.repo=file:target/isolated/maven
     - -Dgalasa.runtime.repo=$(params.runtimeSourceRepo)
     - -Dgalasa.simplatform.repo=$(params.simplatformSourceRepo)
+    - -Dgalasa.javadoc.repo=$(params.javadocSourceRepo)
+    - -Dgalasa.docs.repo=$(params.docsSourceRepo)
     - -Dgalasa.central.repo=$(params.mavenCentralRepo)
     - -Dgalasa.eclipse.repo=$(params.eclipseSourceRepo)
     - --settings
@@ -180,9 +200,9 @@ spec:
     - -e
     - -fae
     - -f
-    - pom7.xml
+    - pomJavaDoc.xml
     - process-sources
-  - name: maven-build-isolated8
+  - name: maven-build-docs
     workingDir: /workspace/git-isolated/full
     image: $(params.dockerRepo)/galasa/galasa-build
     command:
@@ -191,6 +211,8 @@ spec:
     - -Dgalasa.target.repo=file:target/isolated/maven
     - -Dgalasa.runtime.repo=$(params.runtimeSourceRepo)
     - -Dgalasa.simplatform.repo=$(params.simplatformSourceRepo)
+    - -Dgalasa.javadoc.repo=$(params.javadocSourceRepo)
+    - -Dgalasa.docs.repo=$(params.docsSourceRepo)
     - -Dgalasa.central.repo=$(params.mavenCentralRepo)
     - -Dgalasa.eclipse.repo=$(params.eclipseSourceRepo)
     - --settings
@@ -199,27 +221,15 @@ spec:
     - -e
     - -fae
     - -f
-    - pom8.xml
+    - pomDocs.xml
     - process-sources
-  - name: maven-build-isolated9
+  - name: copy-text-files
     workingDir: /workspace/git-isolated/full
     image: $(params.dockerRepo)/galasa/galasa-build
-    command:
-    - mvn
-    - -Dgpg.skip=true
-    - -Dgalasa.target.repo=file:target/isolated/maven
-    - -Dgalasa.runtime.repo=$(params.runtimeSourceRepo)
-    - -Dgalasa.simplatform.repo=$(params.simplatformSourceRepo)
-    - -Dgalasa.central.repo=$(params.mavenCentralRepo)
-    - -Dgalasa.eclipse.repo=$(params.eclipseSourceRepo)
-    - --settings
-    - /workspace/git-isolated/settings.xml
-    - -B
-    - -e
-    - -fae
-    - -f
-    - pom9.xml
-    - process-sources
+    script: |
+      #!/bin/sh
+      set +e
+      cp -v resources/* target/isolated/
   - name: docker-build-isolated-image
     workingDir: /workspace/git-isolated/full
     image: $(params.dockerRepo)/library/kaniko-executor:latest
