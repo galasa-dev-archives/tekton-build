@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: gradle-repo-build
+  name: gradle-repo-build2
 spec:
   resources:
     inputs:
@@ -33,6 +33,9 @@ spec:
   - name: isRelease
     type: string
     default: "false"
+  results:
+  - name: image
+    description: The image produced by this build
   steps:
   - name: get-commit
     workingDir: /workspace/git-gradle
@@ -64,23 +67,3 @@ spec:
     - name: gpggradle
       mountPath: /opt/gradle/gradle-6.8.2/gradle.properties
       subPath: gradle.properties
-  - name: docker-build
-    workingDir: /workspace/git-gradle/docker
-    image: $(params.dockerRepo)/library/kaniko-executor:latest
-    env:
-    - name: DOCKER_CONFIG
-      value: /tekton/home/.docker
-    command:
-    - /kaniko/executor
-    - --dockerfile=./Dockerfile
-    - --context=/workspace/git-gradle/docker
-    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-gradle:$(params.version)-$(params.distBranch)
-    - $(params.noPush)
-    - --oci-layout-path=/workspace/git-gradle/docker/image-digest
-    - --skip-tls-verify
-    - --skip-tls-verify-pull
-    - --single-snapshot
-    - --verbosity=info
-    - --build-arg=dockerRepository=$(params.dockerRepo)
-    - --build-arg=baseVersion=$(params.mavenBaseVersion)
-    - --build-arg=branch=$(params.distBranch)

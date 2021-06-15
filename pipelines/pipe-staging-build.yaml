@@ -1,9 +1,13 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: runtime-build
+  name: staging-build
 spec:
   resources:
+  - name: git-gradle
+    type: git
+  - name: git-maven
+    type: git
   - name: git-framework
     type: git
   - name: git-extensions
@@ -16,28 +20,103 @@ spec:
     type: git
   - name: git-isolated
     type: git
+  - name: git-simplatform
+    type: git
+  - name: git-eclipse
+    type: git
   params:
   - name: distBranch
     type: string
-  - name: version
+  - name: gradleVersion
     type: string
   - name: mavenVersion
     type: string
+  - name: runtimeVersion
+    type: string
+  - name: eclipseVersion
+    type: string
+  - name: simplatformVersion
+    type: string
+  - name: noPush
+    type: string
+    default: ""
   - name: jacocoEnabled
     type: string
-    default: "true"
+    default: "false"
   - name: isRelease
     type: string
-    default: "false"
+    default: "true"
   tasks:
-  - name: framework-build
+  - name: gradle-compile
     taskRef:
-      name: framework-repo-build
+      name: gradle-repo-build
     params:
     - name: distBranch
       value: $(params.distBranch)
     - name: version
-      value: $(params.version)
+      value: $(params.gradleVersion)
+    - name: noPush
+      value: $(params.noPush)
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
+    resources:
+      inputs:
+      - name: git-gradle
+        resource: git-gradle
+  - name: gradle-recycle
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - gradle-compile
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: maven-$(params.distBranch)-gradle
+  - name: maven-compile
+    taskRef:
+      name: maven-repo-build
+    runAfter:
+    - gradle-recycle
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: version
+      value: $(params.mavenVersion)
+    - name: gradleVersion
+      value: $(params.gradleVersion)
+    - name: noPush
+      value: $(params.noPush)
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
+    resources:
+      inputs:
+      - name: git-maven
+        resource: git-maven
+  - name: maven-recycle
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - maven-compile
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: maven-$(params.distBranch)-maven
+  - name: framework-build
+    taskRef:
+      name: framework-repo-build
+    runAfter:
+    - maven-recycle
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: version
+      value: $(params.runtimeVersion)
     - name: mavenVersion
       value: $(params.mavenVersion)
     - name: mavenSourceRepo
@@ -50,7 +129,7 @@ spec:
       inputs:
       - name: git-framework
         resource: git-framework
-  - name: recycle-framework
+  - name: framework-recycle
     taskRef:
       name: recycle-deployment
     runAfter:
@@ -64,14 +143,14 @@ spec:
     taskRef:
       name: extensions-repo-build
     runAfter:
-    - recycle-framework
+    - framework-recycle
     params:
     - name: distBranch
       value: $(params.distBranch)
     - name: version
-      value: $(params.version)
+      value: $(params.runtimeVersion)
     - name: frameworkVersion
-      value: $(params.version)
+      value: $(params.runtimeVersion)
     - name: frameworkSourceRepo
       value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/framework/
     - name: jacocoEnabled
@@ -82,7 +161,7 @@ spec:
       inputs:
       - name: git-extensions
         resource: git-extensions
-  - name: recycle-extensions
+  - name: extensions-recycle
     taskRef:
       name: recycle-deployment
     runAfter:
@@ -96,14 +175,14 @@ spec:
     taskRef:
       name: managers-repo-build
     runAfter:
-    - recycle-extensions
+    - extensions-recycle
     params:
     - name: distBranch
       value: $(params.distBranch)
     - name: version
-      value: $(params.version)
+      value: $(params.runtimeVersion)
     - name: extensionsVersion
-      value: $(params.version)
+      value: $(params.runtimeVersion)
     - name: extensionsSourceRepo
       value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/extensions/
     - name: jacocoEnabled
@@ -114,7 +193,7 @@ spec:
       inputs:
       - name: git-managers
         resource: git-managers
-  - name: recycle-managers
+  - name: managers-recycle
     taskRef:
       name: recycle-deployment
     runAfter:
@@ -128,14 +207,14 @@ spec:
     taskRef:
       name: obr-repo-build
     runAfter:
-    - recycle-managers
+    - managers-recycle
     params:
     - name: distBranch
       value: $(params.distBranch)
     - name: version
-      value: $(params.version)
+      value: $(params.runtimeVersion)
     - name: managersVersion
-      value: $(params.version)
+      value: $(params.runtimeVersion)
     - name: managersSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
@@ -144,7 +223,7 @@ spec:
       inputs:
       - name: git-obr
         resource: git-obr
-  - name: recycle-obr
+  - name: obr-recycle
     taskRef:
       name: recycle-deployment
     runAfter:
@@ -158,12 +237,12 @@ spec:
     taskRef:
       name: obr-generic-build
     runAfter:
-    - recycle-obr
+    - obr-recycle
     params:
     - name: distBranch
       value: $(params.distBranch)
     - name: version
-      value: $(params.version)
+      value: $(params.runtimeVersion)
     - name: obrSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: mavenCentralRepo
@@ -176,12 +255,12 @@ spec:
     taskRef:
       name: javadoc-build
     runAfter:
-    - recycle-obr
+    - obr-recycle
     params:
     - name: distBranch
       value: $(params.distBranch)
     - name: version
-      value: $(params.version)
+      value: $(params.runtimeVersion)
     - name: managersSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
@@ -190,7 +269,7 @@ spec:
       inputs:
       - name: git-obr
         resource: git-obr
-  - name: recycle-javadoc
+  - name: javadoc-recycle
     taskRef:
       name: recycle-deployment
     runAfter:
@@ -200,7 +279,7 @@ spec:
       value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-javadoc
-  - name: recycle-apidoc
+  - name: apidoc-recycle
     taskRef:
       name: recycle-deployment
     runAfter:
@@ -210,16 +289,90 @@ spec:
       value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-apidocs
-  - name: mvp-build
+  - name: simplatform-build
     taskRef:
-      name: mvp-build
+      name: simplatform-repo-build
     runAfter:
-    - recycle-javadoc
+    - managers-recycle
     params:
     - name: distBranch
       value: $(params.distBranch)
     - name: version
-      value: $(params.version)
+      value: $(params.simplatformVersion)
+    - name: managersSourceRepo
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    resources:
+      inputs:
+      - name: git-simplatform
+        resource: git-simplatform
+  - name: simplatform-recycle
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - simplatform-build
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: maven-$(params.distBranch)-simplatform
+  - name: eclipse-build
+    taskRef:
+      name: eclipse-repo-build
+    runAfter:
+    - obr-recycle
+    - simplatform-recycle
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: version
+      value: $(params.eclipseVersion)
+    - name: eclipseRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/photon/
+    - name: simplatformSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: runtimeSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
+    resources:
+      inputs:
+      - name: git-eclipse
+        resource: git-eclipse
+  - name: eclipse-maven-recycle
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - eclipse-build
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: maven-$(params.distBranch)-eclipse
+  - name: eclipse-p2-recycle
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - eclipse-build
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: p2-$(params.distBranch)
+  - name: mvp-build
+    taskRef:
+      name: mvp-build
+    runAfter:
+    - obr-recycle
+    - javadoc-recycle
+    - eclipse-maven-recycle
+    - simplatform-recycle
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: version
+      value: $(params.runtimeVersion)
     - name: simplatformSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
     - name: mavenCentralRepo
@@ -238,7 +391,7 @@ spec:
         resource: git-isolated
       - name: git-obr
         resource: git-obr
-  - name: recycle-mvp-maven
+  - name: mvp-maven-recycle
     taskRef:
       name: recycle-deployment
     runAfter:
@@ -252,12 +405,15 @@ spec:
     taskRef:
       name: isolated-build
     runAfter:
-    - recycle-javadoc
+    - obr-recycle
+    - javadoc-recycle
+    - eclipse-maven-recycle
+    - simplatform-recycle
     params:
     - name: distBranch
       value: $(params.distBranch)
     - name: version
-      value: $(params.version)
+      value: $(params.runtimeVersion)
     - name: simplatformSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
     - name: mavenCentralRepo
@@ -276,7 +432,7 @@ spec:
         resource: git-isolated
       - name: git-obr
         resource: git-obr
-  - name: recycle-isolated-maven
+  - name: isolated-maven-recycle
     taskRef:
       name: recycle-deployment
     runAfter:
@@ -290,12 +446,12 @@ spec:
     taskRef:
       name: docker-operator-build
     runAfter:
-    - recycle-extensions
+    - extensions-recycle
     params:
     - name: distBranch
       value: $(params.distBranch)
     - name: version
-      value: $(params.version)
+      value: $(params.runtimeVersion)
     - name: extensionsSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/extensions/
     - name: mavenCentralRepo

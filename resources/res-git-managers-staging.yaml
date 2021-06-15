@@ -1,0 +1,13 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: git-managers-staging
+spec:
+  type: git
+  params:
+  - name: revision
+    value: staging
+  - name: refspec
+    value: +refs/heads/staging:refs/heads/staging
+  - name: url
+    value: https://github.com/galasa-dev/managers

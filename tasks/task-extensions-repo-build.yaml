@@ -47,6 +47,13 @@ spec:
     - -PjacocoEnabled=$(params.jacocoEnabled)
     - -PisRelease=$(params.isRelease)
     - publish
+    volumeMounts:
+    - name: gpgkey
+      mountPath: /opt/gradle/gradle-6.8.2/galasa.gpg
+      subPath: galasa.gpg
+    - name: gpggradle
+      mountPath: /opt/gradle/gradle-6.8.2/gradle.properties
+      subPath: gradle.properties
   - name: docker-build
     workingDir: /workspace/git-extensions/docker
     image: $(params.dockerRepo)/library/kaniko-executor:latest

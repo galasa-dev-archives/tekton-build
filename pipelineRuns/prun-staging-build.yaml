@@ -1,0 +1,63 @@
+kind: PipelineRun
+apiVersion: tekton.dev/v1beta1
+metadata:
+  name: staging
+spec:
+  params:
+  - name: distBranch
+    value: staging
+  - name: gradleVersion
+    value: 0.15.0
+  - name: mavenVersion
+    value: 0.15.0
+  - name: runtimeVersion
+    value: 0.16.0
+  - name: eclipseVersion
+    value: 0.16.0
+  - name: simplatformVersion
+    value: 0.15.0
+  pipelineRef:
+    name: staging-build
+  serviceAccountName: build-bot
+  resources:
+  - name: git-gradle
+    resourceRef:
+      name: git-gradle-staging
+  - name: git-maven
+    resourceRef:
+      name: git-maven-staging
+  - name: git-framework
+    resourceRef:
+      name: git-framework-staging
+  - name: git-extensions
+    resourceRef:
+      name: git-extensions-staging
+  - name: git-managers
+    resourceRef:
+      name: git-managers-staging
+  - name: git-obr
+    resourceRef:
+      name: git-obr-staging
+  - name: git-docker
+    resourceRef:
+      name: git-docker-staging
+  - name: git-isolated
+    resourceRef:
+      name: git-isolated-staging
+  - name: git-simplatform
+    resourceRef:
+      name: git-simplatform-staging
+  - name: git-eclipse
+    resourceRef:
+      name: git-eclipse-staging
+  podTemplate:
+    nodeSelector:
+      beta.kubernetes.io/arch: amd64
+      platform: hdc
+    volumes:
+    - name: gpgkey
+      secret:
+        secretName: gpgkey
+    - name: gpggradle
+      secret:
+        secretName: gpggradle
