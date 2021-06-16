@@ -1,0 +1,37 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: obr-repo-build2
+spec:
+  resources:
+  - name: git-obr
+    type: git
+  params:
+  - name: distBranch
+    type: string
+  - name: version
+    type: string
+  - name: noPush
+    type: string
+    default: ""
+  tasks:
+  - name: obr-build
+    taskRef:
+      name: obr-repo-build2
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: version
+      value: $(params.version)
+    - name: managersVersion
+      value: $(params.version)
+    - name: managersSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: noPush
+      value: $(params.noPush)
+    resources:
+      inputs:
+      - name: git-obr
+        resource: git-obr

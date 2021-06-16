@@ -33,6 +33,38 @@ spec:
     type: string
     default: "false"
   steps:
+  - name: gpgdirectory
+    workingDir: /workspace
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - mkdir
+    - /workspace/gpg
+  - name: import-gpg
+    workingDir: /workspace
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - gpg
+    - --homedir
+    - /workspace/gpg
+    - --pinentry-mode
+    - loopback
+    - --passphrase-file
+    - /root/mavengpg/galasa.passphrase
+    - --import
+    - /root/mavengpg/galasa.gpg
+    volumeMounts:
+    - name: mavengpg
+      mountPath: /root/mavengpg
+  - name: copy-settings
+    workingDir: /workspace
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - cp
+    - /root/mavengpg/settings.xml
+    - /workspace/gpg/settings.xml
+    volumeMounts:
+    - name: mavengpg
+      mountPath: /root/mavengpg
   - name: gradle-build
     workingDir: /workspace/git-framework/galasa-parent
     image: $(params.dockerRepo)/galasa/galasa-build
@@ -65,7 +97,7 @@ spec:
     - -Dgalasa.jacocoEnabled=$(params.jacocoEnabled)
     - -Dgalasa.isRelease=$(params.isRelease)
     - --settings
-    - /workspace/git-framework/galasa-parent/galasastaging-maven-plugin/settings.xml
+    - /workspace/gpg/settings.xml
     - -B
     - -e
     - -fae

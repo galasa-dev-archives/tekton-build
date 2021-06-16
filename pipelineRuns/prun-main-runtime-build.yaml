@@ -38,3 +38,13 @@ spec:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
       platform: hdc
+    volumes:
+    - name: gpgkey
+      secret:
+        secretName: gpgkey
+    - name: gpggradle
+      secret:
+        secretName: gpggradle
+    - name: mavengpg
+      secret:
+        secretName: mavengpg

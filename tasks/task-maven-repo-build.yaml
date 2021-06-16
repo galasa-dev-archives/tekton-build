@@ -33,15 +33,50 @@ spec:
     type: string
     default: "false"
   steps:
+  - name: gpgdirectory
+    workingDir: /workspace
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - mkdir
+    - /workspace/gpg
+  - name: import-gpg
+    workingDir: /workspace
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - gpg
+    - --homedir
+    - /workspace/gpg
+    - --pinentry-mode
+    - loopback
+    - --passphrase-file
+    - /root/mavengpg/galasa.passphrase
+    - --import
+    - /root/mavengpg/galasa.gpg
+    volumeMounts:
+    - name: mavengpg
+      mountPath: /root/mavengpg
+  - name: copy-settings
+    workingDir: /workspace
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - cp
+    - /root/mavengpg/settings.xml
+    - /workspace/gpg/settings.xml
+    volumeMounts:
+    - name: mavengpg
+      mountPath: /root/mavengpg
   - name: maven-build
     workingDir: /workspace/git-maven/galasa-maven-plugin
     image: $(params.dockerRepo)/galasa/galasa-build
     command:
     - mvn
-    - -Dgpg.skip=true
     - -Dgalasa.release.repo=file:/workspace/git-maven/docker/repo/
     - -Dgalasa.jacocoEnabled=$(params.jacocoEnabled)
     - -Dgalasa.isRelease=$(params.isRelease)
+    - -Dgalasa.source.repo=$(params.mavenSourceRepo)
+    - -Dgalasa.central.repo=$(params.mavenSourceRepo)
+    - --settings
+    - /workspace/gpg/settings.xml
     - -B
     - -e
     - -fae

@@ -61,3 +61,6 @@ spec:
     - name: gpggradle
       secret:
         secretName: gpggradle
+    - name: mavengpg
+      secret:
+        secretName: mavengpg

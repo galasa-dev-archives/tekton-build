@@ -20,10 +20,6 @@ spec:
   - name: isRelease
     type: string
     default: "false"
-  results:
-  - name: image
-    description: The Docker image produced by this pipeline
-    value: $(tasks.gradle-compile.results.image)
   tasks:
   - name: gradle-compile
     taskRef:
