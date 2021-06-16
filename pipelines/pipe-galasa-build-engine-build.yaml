@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: galasa-build-engine-build
+spec:
+  resources:
+  - name: git-tekton-build
+    type: git
+  tasks:
+  - name: galasa-build
+    taskRef:
+      name: galasa-build-engine-build
+    resources:
+      inputs:
+      - name: git-tekton-build
+        resource: git-tekton-build
