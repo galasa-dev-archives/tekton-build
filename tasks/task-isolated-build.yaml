@@ -229,7 +229,7 @@ spec:
     script: |
       #!/bin/sh
       set +e
-      cp -v resources/* target/isolated/
+      cp -vr resources/* target/isolated/
   - name: docker-build-isolated-image
     workingDir: /workspace/git-isolated/full
     image: $(params.dockerRepo)/library/kaniko-executor:latest
@@ -260,7 +260,7 @@ spec:
     - /workspace/git-isolated/full/target/isolated/isolated.tar
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-isolated/full
-    - --destination=galasadev/galasa-isolated:$(params.version)-$(params.distBranch)
+    - --destination=galasadev/galasa-distribution:$(params.version)
     - --oci-layout-path=/workspace/git-isolated/full/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull

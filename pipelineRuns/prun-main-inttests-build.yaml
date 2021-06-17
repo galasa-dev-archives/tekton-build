@@ -7,7 +7,7 @@ spec:
   - name: distBranch
     value: main
   - name: version
-    value: 0.16.0
+    value: 0.17.0
   pipelineRef:
     name: inttests-repo-build
   serviceAccountName: build-bot

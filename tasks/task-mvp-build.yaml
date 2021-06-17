@@ -229,7 +229,7 @@ spec:
     script: |
       #!/bin/sh
       set +e
-      cp -v resources/* target/isolated/
+      cp -vr resources/* target/isolated/
   - name: docker-build-mvp-image
     workingDir: /workspace/git-isolated/mvp
     image: $(params.dockerRepo)/library/kaniko-executor:latest
@@ -261,7 +261,7 @@ spec:
     - /workspace/git-isolated/mvp/target/isolated/isolated.tar
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-isolated/mvp
-    - --destination=galasadev/galasa-mvp:$(params.version)-$(params.distBranch)
+    - --destination=galasadev/galasa-distribution:$(params.version)
     - --oci-layout-path=/workspace/git-isolated/mvp/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
