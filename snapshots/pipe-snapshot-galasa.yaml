@@ -1,7 +1,13 @@
+#
+# Licensed Materials - Property of IBM
+# 
+# (c) Copyright IBM Corp. 2021.
+#
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: snapshot-galasa
+  namespace: galasa-tekton
 spec:
   resources:
   - name: git-tekton
@@ -10,8 +16,6 @@ spec:
   - name: distBranch
     type: string
   - name: oldBranch
-    type: string
-  - name: version
     type: string
   tasks:
   - name: snapshot-obr
@@ -22,8 +26,6 @@ spec:
       value: $(params.distBranch)
     - name: oldBranch
       value: $(params.oldBranch)
-    - name: version
-      value: $(params.version)
     - name: image
       value: galasa-maven-obr
     resources:
@@ -38,8 +40,6 @@ spec:
       value: $(params.distBranch)
     - name: oldBranch
       value: $(params.oldBranch)
-    - name: version
-      value: $(params.version)
     - name: image
       value: galasa-maven-mvp
     resources:
@@ -54,8 +54,6 @@ spec:
       value: $(params.distBranch)
     - name: oldBranch
       value: $(params.oldBranch)
-    - name: version
-      value: $(params.version)
     - name: image
       value: galasa-maven-isolated
     resources:
@@ -70,8 +68,6 @@ spec:
       value: $(params.distBranch)
     - name: oldBranch
       value: $(params.oldBranch)
-    - name: version
-      value: $(params.version)
     - name: image
       value: galasa-boot-embedded-amd64
     resources:
@@ -86,8 +82,6 @@ spec:
       value: $(params.distBranch)
     - name: oldBranch
       value: $(params.oldBranch)
-    - name: version
-      value: $(params.version)
     - name: image
       value: galasa-ibm-boot-embedded-amd64
     resources:

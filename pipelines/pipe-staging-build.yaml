@@ -1,7 +1,13 @@
+#
+# Licensed Materials - Property of IBM
+# 
+# (c) Copyright IBM Corp. 2021.
+#
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: staging-build
+  namespace: galasa-tekton
 spec:
   resources:
   - name: git-gradle

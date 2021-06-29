@@ -1,7 +1,13 @@
+#
+# Licensed Materials - Property of IBM
+# 
+# (c) Copyright IBM Corp. 2021.
+#
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: runtime-build
+  namespace: galasa-tekton
 spec:
   resources:
   - name: git-framework
@@ -21,8 +27,6 @@ spec:
     type: string
   - name: version
     type: string
-  - name: mavenVersion
-    type: string
   - name: jacocoEnabled
     type: string
     default: "true"
@@ -36,10 +40,6 @@ spec:
     params:
     - name: distBranch
       value: $(params.distBranch)
-    - name: version
-      value: $(params.version)
-    - name: mavenVersion
-      value: $(params.mavenVersion)
     - name: mavenSourceRepo
       value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/maven
     - name: jacocoEnabled
@@ -68,10 +68,6 @@ spec:
     params:
     - name: distBranch
       value: $(params.distBranch)
-    - name: version
-      value: $(params.version)
-    - name: frameworkVersion
-      value: $(params.version)
     - name: frameworkSourceRepo
       value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/framework/
     - name: jacocoEnabled
@@ -100,10 +96,6 @@ spec:
     params:
     - name: distBranch
       value: $(params.distBranch)
-    - name: version
-      value: $(params.version)
-    - name: extensionsVersion
-      value: $(params.version)
     - name: extensionsSourceRepo
       value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/extensions/
     - name: jacocoEnabled
@@ -132,10 +124,6 @@ spec:
     params:
     - name: distBranch
       value: $(params.distBranch)
-    - name: version
-      value: $(params.version)
-    - name: managersVersion
-      value: $(params.version)
     - name: managersSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
@@ -162,8 +150,6 @@ spec:
     params:
     - name: distBranch
       value: $(params.distBranch)
-    - name: version
-      value: $(params.version)
     - name: obrSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: mavenCentralRepo
@@ -180,8 +166,6 @@ spec:
     params:
     - name: distBranch
       value: $(params.distBranch)
-    - name: version
-      value: $(params.version)
     - name: managersSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
@@ -294,8 +278,6 @@ spec:
     params:
     - name: distBranch
       value: $(params.distBranch)
-    - name: version
-      value: $(params.version)
     - name: extensionsSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/extensions/
     - name: mavenCentralRepo
