@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y unzip \
     xz-utils \
     golang \
     make \
+    python2 \
     gpg && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Installing Java 11
@@ -59,6 +60,9 @@ RUN curl -L https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cl
 RUN mkdir /opt/node
 RUN curl -L https://nodejs.org/dist/v12.21.0/node-v12.21.0-linux-x64.tar.xz -o /opt/node/node-v12.21.0-linux-x64.tar.xz && tar xf /opt/node/node-v12.21.0-linux-x64.tar.xz -C /opt/node/ && rm /opt/node/node-v12.21.0-linux-x64.tar.xz
 ENV PATH=$PATH:/opt/node/node-v12.21.0-linux-x64/bin
+
+# Install angular cli
+RUN npm install -g @angular/cli@9.1.12
 
 # Installing kubectl
 RUN mkdir -p /opt/k8s/bin
