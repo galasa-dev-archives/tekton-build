@@ -41,7 +41,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: mavenSourceRepo
-      value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/maven
+      value: http://maven-main-maven.galasa-development.svc.cluster.local/galasadev/$(params.distBranch)/maven/maven
     - name: jacocoEnabled
       value: $(params.jacocoEnabled)
     - name: isRelease
@@ -69,7 +69,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: frameworkSourceRepo
-      value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/framework/
+      value: http://maven-main-framework.galasa-development.svc.cluster.local/galasadev/$(params.distBranch)/maven/framework/
     - name: jacocoEnabled
       value: $(params.jacocoEnabled)
     - name: isRelease
@@ -97,7 +97,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: extensionsSourceRepo
-      value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/extensions/
+      value: http://maven-main-extensions.galasa-development.svc.cluster.local/galasadev/$(params.distBranch)/maven/extensions/
     - name: jacocoEnabled
       value: $(params.jacocoEnabled)
     - name: isRelease
@@ -194,82 +194,6 @@ spec:
       value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-apidocs
-  - name: mvp-build
-    taskRef:
-      name: mvp-build
-    runAfter:
-    - recycle-javadoc
-    params:
-    - name: distBranch
-      value: $(params.distBranch)
-    - name: version
-      value: $(params.version)
-    - name: simplatformSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
-    - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
-    - name: runtimeSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
-    - name: eclipseSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/eclipse/
-    - name: javadocSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/javadoc/
-    - name: docsSourceRepo
-      value: https://nexus.galasa.dev/repository/docs/
-    resources:
-      inputs:
-      - name: git-isolated
-        resource: git-isolated
-      - name: git-obr
-        resource: git-obr
-  - name: recycle-mvp-maven
-    taskRef:
-      name: recycle-deployment
-    runAfter:
-    - mvp-build
-    params:
-    - name: namespace
-      value: galasa-development
-    - name: deployment
-      value: maven-$(params.distBranch)-mvp
-  - name: isolated-build
-    taskRef:
-      name: isolated-build
-    runAfter:
-    - recycle-javadoc
-    params:
-    - name: distBranch
-      value: $(params.distBranch)
-    - name: version
-      value: $(params.version)
-    - name: simplatformSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
-    - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
-    - name: runtimeSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
-    - name: eclipseSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/eclipse/
-    - name: javadocSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/javadoc/
-    - name: docsSourceRepo
-      value: https://nexus.galasa.dev/repository/docs/
-    resources:
-      inputs:
-      - name: git-isolated
-        resource: git-isolated
-      - name: git-obr
-        resource: git-obr
-  - name: recycle-isolated-maven
-    taskRef:
-      name: recycle-deployment
-    runAfter:
-    - isolated-build
-    params:
-    - name: namespace
-      value: galasa-development
-    - name: deployment
-      value: maven-$(params.distBranch)-isolated
   - name: docker-operator-build
     taskRef:
       name: docker-operator-build
