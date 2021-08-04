@@ -5,3 +5,4 @@ metadata:
 secrets:
   - name: harbor-user-pass
   - name: github-creds
+  - name: docker-galasa-dev

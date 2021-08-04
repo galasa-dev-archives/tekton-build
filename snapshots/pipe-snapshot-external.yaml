@@ -1,0 +1,116 @@
+#
+# Licensed Materials - Property of IBM
+# 
+# (c) Copyright IBM Corp. 2021.
+#
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: snapshot-external
+  namespace: galasa-tekton
+spec:
+  resources:
+  - name: git-tekton
+    type: git
+  params:
+  - name: fromDistBranch
+    type: string
+    default: main
+  - name: toDistBranch
+    type: string
+    default: main
+  tasks:
+  - name: snapshot-boot-embedded
+    taskRef:
+      name: copy-docker
+    params:
+    - name: fromDistBranch
+      value: $(params.fromDistBranch)
+    - name: toDistBranch
+      value: $(params.toDistBranch)
+    - name: image
+      value: galasa-boot-embedded-amd64
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton
+  - name: snapshot-docker-operator
+    taskRef:
+      name: copy-docker
+    runAfter:
+    - snapshot-boot-embedded
+    params:
+    - name: fromDistBranch
+      value: $(params.fromDistBranch)
+    - name: toDistBranch
+      value: $(params.toDistBranch)
+    - name: image
+      value: galasa-docker-operator-amd64
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton
+  - name: snapshot-simplatform
+    taskRef:
+      name: copy-docker
+    runAfter:
+    - snapshot-docker-operator
+    params:
+    - name: fromDistBranch
+      value: $(params.fromDistBranch)
+    - name: toDistBranch
+      value: $(params.toDistBranch)
+    - name: image
+      value: galasa-simplatform-amd64
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton
+  - name: snapshot-p2
+    taskRef:
+      name: copy-docker
+    runAfter:
+    - snapshot-simplatform
+    params:
+    - name: fromDistBranch
+      value: $(params.fromDistBranch)
+    - name: toDistBranch
+      value: $(params.toDistBranch)
+    - name: image
+      value: galasa-p2
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton
+  - name: snapshot-obr-repo
+    taskRef:
+      name: copy-docker
+    runAfter:
+    - snapshot-p2
+    params:
+    - name: fromDistBranch
+      value: $(params.fromDistBranch)
+    - name: toDistBranch
+      value: $(params.toDistBranch)
+    - name: image
+      value: galasa-maven-obr
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton
+  - name: snapshot-isolated
+    taskRef:
+      name: copy-docker
+    runAfter:
+    - snapshot-obr-repo
+    params:
+    - name: fromDistBranch
+      value: $(params.fromDistBranch)
+    - name: toDistBranch
+      value: $(params.toDistBranch)
+    - name: image
+      value: galasa-maven-isolated
+    resources:
+      inputs:
+      - name: git-tekton
+        resource: git-tekton

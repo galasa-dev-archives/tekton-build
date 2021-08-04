@@ -1,0 +1,48 @@
+#
+# Licensed Materials - Property of IBM
+# 
+# (c) Copyright IBM Corp. 2021.
+#
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: copy-docker
+  namespace: galasa-tekton
+spec:
+  resources:
+    inputs:
+      - name: git-tekton
+        type: git
+  params:
+  - name: fromDistBranch
+    type: string
+  - name: toDistBranch
+    type: string
+  - name: image
+    type: string
+  - name: fromDockerRepo
+    type: string
+    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  - name: toDockerRepo
+    type: string
+    default: docker.galasa.dev
+  steps: 
+  - name: snap-generic
+    workingDir: /workspace/git-tekton/snapshots
+    image: $(params.fromDockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./DockerfileGeneric
+    - --context=/workspace/git-tekton/snapshots
+    - --destination=$(params.toDockerRepo)/galasadev/$(params.image):$(params.toDistBranch)
+    - --oci-layout-path=/workspace/git-framework/docker/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.fromDockerRepo)
+    - --build-arg=image=$(params.image)
+    - --build-arg=oldBranch=$(params.fromDistBranch)
