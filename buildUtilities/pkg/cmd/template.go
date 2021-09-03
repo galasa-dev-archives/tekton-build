@@ -1,7 +1,5 @@
 //
-// Licensed Materials - Property of IBM
-//
-// (c) Copyright IBM Corp. 2021.
+// Copyright contributors to the Galasa project 
 //
 
 package cmd
@@ -20,7 +18,7 @@ import (
 
 var (
 	templateFile       string
-	releaseMetadata    string
+	releaseMetadata    *[]string
 	outputFile         string
 	requireObr         bool
 	requireBom         bool
@@ -53,7 +51,7 @@ type artifact struct {
 
 func init() {
 	templateCmd.PersistentFlags().StringVarP(&templateFile, "template", "t", "", "template file")
-	templateCmd.PersistentFlags().StringVarP(&releaseMetadata, "releaseMetadata", "r", "", "release metadata file")
+	releaseMetadata = templateCmd.PersistentFlags().StringArrayP("releaseMetadata", "r", nil, "release metadata files")
 	templateCmd.PersistentFlags().StringVarP(&outputFile, "output", "o", "", "output file")
 
 	templateCmd.PersistentFlags().BoolVarP(&requireObr, "obr", "", false, "require maven artifacts for OBR")
@@ -69,8 +67,8 @@ func init() {
 func execute(cmd *cobra.Command, args []string) {
 	fmt.Println("Galasa Build - Template")
 
-	if releaseMetadata == "" {
-		panic("Release metadata file has not been provided")
+	if releaseMetadata == nil {
+		panic("Release metadata files have not been provided")
 	}
 	
 	if templateFile == "" {
@@ -80,16 +78,53 @@ func execute(cmd *cobra.Command, args []string) {
 	if outputFile == "" {
 		fmt.Println("Output file has not been provided")
 	}
+
+	// Read in all the metadata files, 
+	initial := true
+	for _, inputFile := range *releaseMetadata {
+		var inputRelease galasayaml.Release
+
+		b, err := ioutil.ReadFile(inputFile)
+		if err != nil {
+			panic(err)
+		}
 	
-	b, err := ioutil.ReadFile(releaseMetadata)
-	if err != nil {
-		panic(err)
+		err = yaml.Unmarshal(b, &inputRelease)
+		if err != nil {
+			panic(err)
+		}
+
+		if initial {
+			release = inputRelease
+			initial = false
+		} else {
+			if inputRelease.Release.Version != "" {
+				release.Release.Version = inputRelease.Release.Version
+			}
+
+			for _, inputBundle := range inputRelease.Framework.Bundles {
+				release.Framework.Bundles = append(release.Framework.Bundles, inputBundle)
+			}
+
+			for _, inputBundle := range inputRelease.Api.Bundles {
+				release.Framework.Bundles = append(release.Framework.Bundles, inputBundle)
+			}
+
+			for _, inputBundle := range inputRelease.Managers.Bundles {
+				release.Framework.Bundles = append(release.Framework.Bundles, inputBundle)
+			}
+
+			for _, inputBundle := range inputRelease.External.Bundles {
+				release.Framework.Bundles = append(release.Framework.Bundles, inputBundle)
+			}
+		}
+
 	}
 
-	err = yaml.Unmarshal(b, &release)
-	if err != nil {
-		panic(err)
+	if release.Release.Version == "" {
+		panic("Release version not provided")
 	}
+
 
 	var requires = 0;
 	if requireObr {
@@ -128,6 +163,7 @@ func execute(cmd *cobra.Command, args []string) {
 	t := templateData {}
 
 	t.Release = release.Release.Version
+	fmt.Printf("Release version is %v\n", t.Release)
 
 	for _, bundle := range release.Framework.Bundles {
 		if bundle.Group == "" {
@@ -269,7 +305,7 @@ func execute(cmd *cobra.Command, args []string) {
 		}	
 	}
 	
-	b, err = ioutil.ReadFile(templateFile)
+	b, err := ioutil.ReadFile(templateFile)
 	if err != nil {
 		panic(err)
 	}
