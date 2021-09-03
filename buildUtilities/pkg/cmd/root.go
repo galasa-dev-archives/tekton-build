@@ -1,7 +1,5 @@
 //
-// Licensed Materials - Property of IBM
-//
-// (c) Copyright IBM Corp. 2021.
+// Copyright contributors to the Galasa project 
 //
 
 package cmd
@@ -18,6 +16,8 @@ var rootCmd = &cobra.Command{
 	Short: "Build utilities for Galasa",
 	Long:  "",
 }
+
+var version = "0.0.1"
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {

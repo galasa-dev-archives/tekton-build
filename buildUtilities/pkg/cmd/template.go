@@ -65,7 +65,7 @@ func init() {
 }
 
 func execute(cmd *cobra.Command, args []string) {
-	fmt.Println("Galasa Build - Template")
+	fmt.Printf("Galasa Build - Template - version %v\n", version)
 
 	if releaseMetadata == nil {
 		panic("Release metadata files have not been provided")
