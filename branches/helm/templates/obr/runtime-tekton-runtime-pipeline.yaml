@@ -32,7 +32,7 @@ spec:
     - name: revision
       value: $(params.distBranch)
     - name: depth
-      value: "99999999"
+      value: "0"
     - name: subdirectory
       value: framework
     workspaces:
@@ -47,7 +47,7 @@ spec:
     - name: revision
       value: $(params.distBranch)
     - name: depth
-      value: "99999999"
+      value: "0"
     - name: subdirectory
       value: extensions
     workspaces:
@@ -62,7 +62,7 @@ spec:
     - name: revision
       value: $(params.distBranch)
     - name: depth
-      value: "99999999"
+      value: "0"
     - name: subdirectory
       value: managers
     workspaces:
@@ -79,7 +79,7 @@ spec:
     - name: refspec
       value: $(params.refspec)
     - name: depth
-      value: "99999999"
+      value: "0"
     - name: subdirectory
       value: obr
     workspaces:
@@ -96,7 +96,7 @@ spec:
     - name: refspec
       value: $(params.refspec)
     - name: depth
-      value: "99999999"
+      value: "0"
     - name: subdirectory
       value: docker
     workspaces:
