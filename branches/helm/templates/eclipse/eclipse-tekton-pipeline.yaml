@@ -48,7 +48,7 @@ spec:
     - name: eclipseRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/photon/
     - name: simplatformSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
+      value: https://cicscit.hursley.ibm.com/galasadev/main/maven/simplatform/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     - name: runtimeSourceRepo
