@@ -4,20 +4,16 @@
 kind: PipelineRun
 apiVersion: tekton.dev/v1beta1
 metadata:
-  generateName: maven-build-
+  generateName: main-eclipse-
 spec:
   params:
   pipelineRef:
-    name: maven-repo-build
+    name: eclipse-repo-build
   serviceAccountName: build-bot
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
       platform: hdc
-    volumes:
-    - name: mavengpg
-      secret:
-        secretName: mavengpg
   workspaces:
   - name: git-workspace
     volumeClaimTemplate:
@@ -27,4 +23,4 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
+            storage: 3Gi

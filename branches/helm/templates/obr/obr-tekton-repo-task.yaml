@@ -5,7 +5,6 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: obr-repo-build
-  namespace: galasa-tekton
 spec:
   workspaces:
   - name: git-workspace
@@ -75,7 +74,13 @@ spec:
     - galasabld 
     - template 
     - --releaseMetadata
-    - ../release.yaml 
+    - /workspace/git/framework/release.yaml 
+    - --releaseMetadata
+    - /workspace/git/extensions/release.yaml 
+    - --releaseMetadata
+    - /workspace/git/managers/release.yaml 
+    - --releaseMetadata
+    - /workspace/git/obr/release.yaml 
     - --template
     - pom.template 
     - --output
@@ -108,7 +113,13 @@ spec:
     - galasabld 
     - template 
     - --releaseMetadata
-    - ../release.yaml 
+    - /workspace/git/framework/release.yaml 
+    - --releaseMetadata
+    - /workspace/git/extensions/release.yaml 
+    - --releaseMetadata
+    - /workspace/git/managers/release.yaml 
+    - --releaseMetadata
+    - /workspace/git/obr/release.yaml 
     - --template
     - pom.template 
     - --output

@@ -111,7 +111,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: mavenSourceRepo
-      value: http://maven-$(params.distBranch)-maven.galasa-development.svc.cluster.local/galasadev/$(params.distBranch)/maven/maven
+      value: http://maven-$(params.distBranch)-maven.galasa-dev-{{ .Release.Name }}.svc.cluster.local/galasadev/$(params.distBranch)/maven/maven
     - name: jacocoEnabled
       value: $(params.jacocoEnabled)
     - name: isRelease
@@ -126,7 +126,7 @@ spec:
     - framework-build
     params:
     - name: namespace
-      value: galasa-development
+      value: galasa-dev-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-framework
   - name: extensions-build
@@ -139,7 +139,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: frameworkSourceRepo
-      value: http://maven-$(params.distBranch)-framework.galasa-development.svc.cluster.local/galasadev/$(params.distBranch)/maven/framework/
+      value: http://maven-$(params.distBranch)-framework.galasa-dev-{{ .Release.Name }}.svc.cluster.local/galasadev/$(params.distBranch)/maven/framework/
     - name: jacocoEnabled
       value: $(params.jacocoEnabled)
     - name: isRelease
@@ -154,7 +154,7 @@ spec:
     - extensions-build
     params:
     - name: namespace
-      value: galasa-development
+      value: galasa-dev-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-extensions
   - name: managers-build
@@ -167,7 +167,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: extensionsSourceRepo
-      value: http://maven-$(params.distBranch)-extensions.galasa-development.svc.cluster.local/galasadev/$(params.distBranch)/maven/extensions/
+      value: http://maven-$(params.distBranch)-extensions.galasa-dev-{{ .Release.Name }}.svc.cluster.local/galasadev/$(params.distBranch)/maven/extensions/
     - name: jacocoEnabled
       value: $(params.jacocoEnabled)
     - name: isRelease
@@ -182,7 +182,7 @@ spec:
     - managers-build
     params:
     - name: namespace
-      value: galasa-development
+      value: galasa-dev-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-managers
   - name: obr-build
@@ -211,12 +211,12 @@ spec:
     - obr-build
     params:
     - name: namespace
-      value: galasa-development
+      value: galasa-dev-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-obr
   - name: obr-embedded
     taskRef:
-      name: obr-generic-build
+      name: obr-docker-build
     runAfter:
     - recycle-obr
     - clone-docker
@@ -252,7 +252,7 @@ spec:
     - javadoc-build
     params:
     - name: namespace
-      value: galasa-development
+      value: galasa-dev-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-javadoc
   - name: recycle-apidoc
@@ -262,7 +262,7 @@ spec:
     - javadoc-build
     params:
     - name: namespace
-      value: galasa-development
+      value: galasa-dev-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-apidocs
   - name: docker-operator-build
