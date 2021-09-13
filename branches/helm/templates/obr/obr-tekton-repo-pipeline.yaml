@@ -1,0 +1,52 @@
+#
+# Copyright contributors to the Galasa project 
+#
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: obr-repo-build
+spec:
+  resources:
+  - name: git-obr
+    type: git
+  params:
+  - name: distBranch
+    type: string
+    default: {{ .Release.Name }}
+  - name: refspec
+    type: string
+    default: +refs/heads/{{ .Release.Name }}:refs/heads/{{ .Release.Name }}
+  - name: noPush
+    type: string
+    default: ""
+  tasks:
+  - name: obr-build
+    taskRef:
+      name: obr-repo-build
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: managersSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: noPush
+      value: $(params.noPush)
+    resources:
+      inputs:
+      - name: git-obr
+        resource: git-obr
+  - name: recycle-obr
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - obr-build
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-dev-{{ .Release.Name }}
+    - name: deployment
+      value: maven-$(params.distBranch)-obr

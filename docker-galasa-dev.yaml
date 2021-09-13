@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  password: Y1dzTmttbTRROFd6WHlIR1U4VDhYSzRD
+  username: YWRtaW4=
+kind: Secret
+metadata:
+  annotations:
+    tekton.dev/docker-0: https://docker.galasa.dev
+  name: docker-galasa-dev
+  namespace: galasa-tekton
+type: kubernetes.io/basic-auth

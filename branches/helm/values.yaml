@@ -1,0 +1,58 @@
+# Default values for galasa-helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  replicaCount: 2
+  pullPolicy: Always
+
+eclipse:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-eclipse
+
+extensions:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-extensions
+ 
+framework:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-framework
+
+gradle:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-gradle
+
+isolated:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-isolated
+
+managers:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-managers
+
+maven:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-maven
+
+mvp:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-mvp
+
+obr:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-obr
+
+javadoc:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-javadoc
+
+apidocs:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-javadocs
+
+p2:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-p2
+
+simplatform:
+  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-simplatform
+
+service:
+  type: ClusterIP
+  port: 80
+
+nodeSelector: 
+  beta.kubernetes.io/arch: amd64
+
+fullVersion: true
+
+ingress:
+  enabled: true

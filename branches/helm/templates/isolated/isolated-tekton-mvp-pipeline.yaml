@@ -1,0 +1,138 @@
+#
+# Copyright contributors to the Galasa project 
+#
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: mvp-build
+spec:
+  workspaces:
+  - name: git-workspace
+    optional: false
+  params:
+  - name: distBranch
+    type: string
+    default: {{ .Release.Name }}
+  - name: refspec
+    type: string
+    default: +refs/heads/{{ .Release.Name }}:refs/heads/{{ .Release.Name }}
+  - name: noPush
+    type: string
+    default: ""
+  tasks:
+  - name: clone-obr
+    taskRef: 
+      name: git-clone
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/obr
+    - name: revision
+      value: $(params.distBranch)
+    - name: depth
+      value: "1"
+    - name: subdirectory
+      value: obr
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-framework
+    taskRef: 
+      name: git-clone
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/framework
+    - name: revision
+      value: $(params.distBranch)
+    - name: depth
+      value: "1"
+    - name: subdirectory
+      value: framework
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-extensions
+    taskRef: 
+      name: git-clone
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/extensions
+    - name: revision
+      value: $(params.distBranch)
+    - name: depth
+      value: "1"
+    - name: subdirectory
+      value: extensions
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-managers
+    taskRef: 
+      name: git-clone
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/managers
+    - name: revision
+      value: $(params.distBranch)
+    - name: depth
+      value: "1"
+    - name: subdirectory
+      value: managers
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-isolated
+    taskRef: 
+      name: git-clone
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/isolated
+    - name: revision
+      value: $(params.distBranch)
+    - name: refspec
+      value: $(params.refspec)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: isolated
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: mvp-build
+    taskRef:
+      name: mvp-build
+    runAfter:
+    - clone-obr
+    - clone-framework
+    - clone-extensions
+    - clone-managers
+    - clone-isolated
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: simplatformSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: runtimeSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
+    - name: eclipseSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/eclipse/
+    - name: javadocSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/javadoc/
+    - name: docsSourceRepo
+      value: https://nexus.galasa.dev/repository/docs/
+    - name: noPush
+      value: $(params.noPush)
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-mvp-maven
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - mvp-build
+    params:
+    - name: namespace
+      value: galasa-dev-{{ .Release.Name }}
+    - name: deployment
+      value: maven-$(params.distBranch)-mvp

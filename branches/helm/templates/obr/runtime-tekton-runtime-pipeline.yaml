@@ -5,7 +5,6 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: runtime-build
-  namespace: galasa-tekton
 spec:
   workspaces:
   - name: git-workspace
@@ -13,10 +12,10 @@ spec:
   params:
   - name: distBranch
     type: string
-    default: "main"
+    default: {{ .Release.Name }}
   - name: refspec
     type: string
-    default: "+refs/heads/main:refs/heads/main"
+    default: +refs/heads/{{ .Release.Name }}:refs/heads/{{ .Release.Name }}
   - name: jacocoEnabled
     type: string
     default: "true"

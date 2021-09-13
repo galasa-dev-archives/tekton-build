@@ -1,0 +1,16 @@
+{{- if .Values.ingress.enabled }}
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: maven-{{ .Release.Name }}-obr443
+  annotations:
+    kubernetes.io/ingress.class: nginx-cit
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /galasadev/{{ .Release.Name}}/maven/obr
+            backend:
+              serviceName: maven-{{ .Release.Name}}-obr
+              servicePort: 80
+{{- end }}

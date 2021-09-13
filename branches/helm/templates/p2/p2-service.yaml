@@ -1,0 +1,16 @@
+{{- if .Values.fullVersion }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: p2-{{ .Release.Name }}
+  labels:
+    app: p2-{{ .Release.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: p2-{{ .Release.Name }}
+{{- end }}

@@ -1,0 +1,16 @@
+{{- if .Values.fullVersion }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: maven-{{ .Release.Name }}-eclipse
+  labels:
+    app: maven-{{ .Release.Name }}-eclipse
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: maven-{{ .Release.Name }}-eclipse
+{{- end }}

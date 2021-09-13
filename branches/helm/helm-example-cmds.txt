@@ -1,0 +1,9 @@
+helm -n galasa-development install main .
+
+helm -n galasa-development install staging .
+
+helm -n galasa-development install --set fullVersion=false codecov .
+
+helm -n galasa-development install --set fullVersion=false prod .
+
+helm -n galasa-development install --set fullVersion=false integration .

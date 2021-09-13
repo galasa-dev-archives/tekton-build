@@ -12,8 +12,6 @@ spec:
   params:
   - name: distBranch
     value: main
-  - name: version
-    value: 0.17.0
   - name: mavenVersion
     value: 0.15.0
   - name: jacocoEnabled
@@ -31,15 +29,9 @@ spec:
   - name: git-managers
     resourceRef:
       name: git-managers-main
-  - name: git-obr
-    resourceRef:
-      name: git-obr-main
   - name: git-docker
     resourceRef:
       name: git-docker-main
-  - name: git-isolated
-    resourceRef:
-      name: git-isolated-main
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
@@ -54,3 +46,13 @@ spec:
     - name: mavengpg
       secret:
         secretName: mavengpg
+  workspaces:
+  - name: git-workspace
+    volumeClaimTemplate:
+      spec:
+        storageClassName: rbd
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

@@ -16,8 +16,6 @@ spec:
   params:
   - name: distBranch
     type: string
-  - name: version
-    type: string
   - name: dockerRepo
     type: string
     default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
@@ -47,7 +45,7 @@ spec:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-tekton/buildUtilities
-    - --destination=$(params.dockerRepo)/galasadev/galasa-buildutilities:$(params.version)-$(params.distBranch)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-buildutilities:$(params.distBranch)
     - $(params.noPush)
     - --oci-layout-path=/workspace/git-framework/docker/image-digest
     - --skip-tls-verify

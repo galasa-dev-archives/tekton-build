@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maven-{{ .Release.Name }}-mvp
+  labels:
+    app: maven-{{ .Release.Name }}-mvp
+spec:
+  replicas: {{ .Values.image.replicaCount }}
+  selector:
+    matchLabels:
+        app: maven-{{ .Release.Name }}-mvp
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: maven-{{ .Release.Name }}-mvp
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.mvp.repository }}:{{ .Release.Name }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
