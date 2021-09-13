@@ -41,6 +41,9 @@ still need to develop the harbor image deletes
 
 # Building a branch
 
+You will need to download 2 executables,  kubectl and tkn.  For kubectl see [https://kubernetes.io/docs/tasks/tools/](https://kubernetes.io/docs/tasks/tools/), or kubernetes is currently at 1.17.
+For tkn, see [https://tekton.dev/docs/cli/](https://tekton.dev/docs/cli/) or download a binary from the releases page at [https://github.com/tektoncd/cli/releases](https://github.com/tektoncd/cli/releases)
+
 The build process uses Tekton to build Galasa, all the pipelines and tasks have been created in the namespace.   The builds must be built using the pipeline runs found in the branches/pipelineRuns folder in the tekton-build repo in the following order:-
 ```
 kubectl -n galasa-dev-iss876 create -f gradle-build.yaml
