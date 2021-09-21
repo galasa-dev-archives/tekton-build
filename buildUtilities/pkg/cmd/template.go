@@ -38,8 +38,9 @@ var (
 )
 
 type templateData struct {
-	Release string
-	Artifacts []artifact
+	Release      string
+	Artifacts    []artifact
+	BootRelease  string
 }
 type artifact struct {
 	GroupId       string
@@ -197,7 +198,12 @@ func execute(cmd *cobra.Command, args []string) {
 			t.Artifacts = append(t.Artifacts, artifact)
 
 			fmt.Printf("    Added framework artifact %v:%v:%v\n", artifact.GroupId, artifact.ArtifactId, artifact.Version)
-		}	
+		}
+		
+		if bundle.Artifact == "galasa-boot" {
+			t.BootRelease = bundle.Version
+			fmt.Printf("    Set galasa-boot version to %v\n", bundle.Version)
+		}
 	}
 	
 	for _, bundle := range release.Api.Bundles {

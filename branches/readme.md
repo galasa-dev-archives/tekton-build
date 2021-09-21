@@ -52,6 +52,8 @@ kubectl -n galasa-dev-iss876 create -f runtime-build.yaml
 kubectl -n galasa-dev-iss876 create -f eclipse-build.yaml
 kubectl -n galasa-dev-iss876 create -f isolated-build.yaml
 ```
+Run them one at a time, as each build is the input to the next one.  Please run all the builds when you receive the new branch, as it will clear all errors from the kubernetes cluster.
+
 
 eclipse and isolated are only required once you need to perform the full regressions runs against your build.   gradle and maven normally only need to be built once.
 
