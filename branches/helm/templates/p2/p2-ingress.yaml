@@ -1,20 +1,23 @@
 {{- if .Values.fullVersion }}
 {{- if .Values.ingress.enabled }}
 kind: Ingress
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 metadata:
   name: p2-{{ .Release.Name }}
   annotations:
-    kubernetes.io/ingress.class: nginx-cit-insecure
-    nginx.ingress.kubernetes.io/force-ssl-redirect: 'false'
     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
 spec:
+  ingressClassName: nginx
   rules:
-    - http:
-        paths:
-          - path: /galasadev/{{ .Release.Name}}/p2
-            backend:
-              serviceName: p2-{{ .Release.Name}}
-              servicePort: 80
+  - host: galasadev-cicsk8s.hursley.ibm.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: p2-{{ .Release.Name}}
+            port:
+              number: 80
+        path: /{{ .Release.Name}}/p2
+        pathType: Prefix
 {{- end }}
 {{- end }}

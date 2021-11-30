@@ -17,15 +17,16 @@ import (
 )
 
 var (
-	templateFile       string
-	releaseMetadata    *[]string
-	outputFile         string
-	requireObr         bool
-	requireBom         bool
-	requireMvp         bool
-	requireIsolated    bool
-	requireJavadoc     bool
-	requireManagerdoc  bool
+	templateFile         string
+	releaseMetadata      *[]string
+	outputFile           string
+	requireObr           bool
+	requireBom           bool
+	requireMvp           bool
+	requireIsolated      bool
+	requireJavadoc       bool
+	requireManagerdoc    bool
+	requireCodeCoverage  bool
 
 	templateCmd = &cobra.Command{
 		Use:   "template",
@@ -61,6 +62,7 @@ func init() {
 	templateCmd.PersistentFlags().BoolVarP(&requireIsolated, "isolated", "", false, "require maven artifacts for isolated zip")
 	templateCmd.PersistentFlags().BoolVarP(&requireJavadoc, "javadoc", "", false, "require maven artifacts for javadoc")
 	templateCmd.PersistentFlags().BoolVarP(&requireManagerdoc, "managerdoc", "", false, "require maven artifacts for manager docs")
+	templateCmd.PersistentFlags().BoolVarP(&requireCodeCoverage, "codecoverage", "", false, "require maven artifacts for code coverage processing")
 
 	rootCmd.AddCommand(templateCmd)
 }
@@ -153,6 +155,11 @@ func execute(cmd *cobra.Command, args []string) {
 		fmt.Println("Manager Docs artifact type requested")
 	}
 
+	if requireCodeCoverage {
+		requires++
+		fmt.Println("Code Coverage artifact type requested")
+	}
+
 	if requires == 0 {
 		panic("Artifact type has not been provided")
 	}
@@ -185,6 +192,8 @@ func execute(cmd *cobra.Command, args []string) {
 			selected = bundle.Javadoc
 		} else if requireManagerdoc {
 			selected = bundle.Managerdoc
+		} else if requireCodeCoverage {
+			selected = bundle.Codecoverage
 		}
 		
 		if selected {
@@ -225,6 +234,8 @@ func execute(cmd *cobra.Command, args []string) {
 			selected = bundle.Javadoc
 		} else if requireManagerdoc {
 			selected = bundle.Managerdoc
+		} else if requireCodeCoverage {
+			selected = bundle.Codecoverage
 		}
 		
 		if selected {
@@ -260,6 +271,8 @@ func execute(cmd *cobra.Command, args []string) {
 			selected = true
 		} else if requireManagerdoc {
 			selected = true
+		} else if requireCodeCoverage {
+			selected = bundle.Codecoverage
 		}
 		
 		if selected {
@@ -295,6 +308,8 @@ func execute(cmd *cobra.Command, args []string) {
 			selected = false
 		} else if requireManagerdoc {
 			selected = false
+		} else if requireCodeCoverage {
+			selected = bundle.Codecoverage
 		}
 		
 		if selected {

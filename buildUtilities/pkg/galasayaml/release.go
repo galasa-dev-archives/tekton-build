@@ -40,5 +40,6 @@ type Bundle struct {
 	Mvp           bool
 	Javadoc       bool
 	Managerdoc    bool
+	Codecoverage  bool
 }
 

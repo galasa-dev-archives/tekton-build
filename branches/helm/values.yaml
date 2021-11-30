@@ -7,50 +7,50 @@ image:
   pullPolicy: Always
 
 eclipse:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-eclipse
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-maven-eclipse
 
 extensions:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-extensions
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-maven-extensions
  
 framework:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-framework
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-maven-framework
 
 gradle:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-gradle
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-maven-gradle
 
 isolated:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-isolated
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-maven-isolated
 
 managers:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-managers
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-maven-managers
 
 maven:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-maven
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-maven-maven
 
 mvp:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-mvp
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-maven-mvp
 
 obr:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-obr
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-maven-obr
 
 javadoc:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-javadoc
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-maven-javadoc
 
 apidocs:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-javadocs
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-javadocs
 
 p2:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-p2
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-p2
 
 simplatform:
-  repository: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/galasadev/galasa-maven-simplatform
+  repository: harbor-cicsk8s.hursley.ibm.com/galasadev/galasa-maven-simplatform
 
 service:
   type: ClusterIP
   port: 80
 
 nodeSelector: 
-  beta.kubernetes.io/arch: amd64
+  kubernetes.io/arch: amd64
 
 fullVersion: true
 
