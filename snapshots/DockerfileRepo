@@ -6,4 +6,4 @@ FROM ${dockerRepository}/galasadev/${image}:${oldBranch}
 ARG branch
 ARG oldBranch
 
-RUN sed -i "s/galasadev\/${oldBranch}/galasadev\/${branch}/" /usr/local/apache2/conf/httpd.conf
+RUN sed -i "s/\/${oldBranch}/\/${branch}/" /usr/local/apache2/conf/httpd.conf
