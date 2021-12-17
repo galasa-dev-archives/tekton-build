@@ -13,7 +13,6 @@ spec:
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
-      platform: hdc
     volumes:
     - name: mavengpg
       secret:
@@ -22,7 +21,6 @@ spec:
   - name: git-workspace
     volumeClaimTemplate:
       spec:
-        storageClassName: rbd
         accessModes:
           - ReadWriteOnce
         resources:

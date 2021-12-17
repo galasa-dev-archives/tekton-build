@@ -33,7 +33,7 @@ spec:
     default: https://repo.maven.apache.org/maven2/
   - name: dockerRepo
     type: string
-    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+    default: harbor-cicsk8s.hursley.ibm.com
   - name: mavenBaseVersion
     type: string
     default: 0.16.0
@@ -43,7 +43,7 @@ spec:
   steps:
   - name: generate-pom
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - galasabld 
     - template 
@@ -62,7 +62,7 @@ spec:
     - --isolated
   - name: maven-build-isolated1
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgpg.skip=true
@@ -83,7 +83,7 @@ spec:
     - process-sources
   - name: maven-build-isolated2
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgpg.skip=true
@@ -104,7 +104,7 @@ spec:
     - process-sources
   - name: maven-build-isolated3
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgpg.skip=true
@@ -125,7 +125,7 @@ spec:
     - process-sources
   - name: maven-build-isolated4
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgpg.skip=true
@@ -146,7 +146,7 @@ spec:
     - process-sources
   - name: maven-build-isolated5
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgpg.skip=true
@@ -167,7 +167,7 @@ spec:
     - process-sources
   - name: maven-build-isolated6
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgpg.skip=true
@@ -188,7 +188,7 @@ spec:
     - process-sources
   - name: maven-build-javadoc
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgpg.skip=true
@@ -209,7 +209,7 @@ spec:
     - process-sources
   - name: maven-build-docs
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgpg.skip=true
@@ -230,14 +230,14 @@ spec:
     - process-sources
   - name: copy-text-files
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     script: |
       #!/bin/sh
       set +e
       cp -vr resources/* target/isolated/
   - name: docker-build-isolated-image
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    image: $(params.dockerRepo)/common/kaniko-project/executor:latest
     env:
     - name: DOCKER_CONFIG
       value: /tekton/home/.docker
@@ -251,10 +251,10 @@ spec:
     - --skip-tls-verify-pull
     - --single-snapshot
     - --verbosity=info
-    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=dockerRepository=$(params.dockerRepo)/dockerhub
   - name: docker-tar-isolated-image
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    image: $(params.dockerRepo)/common/kaniko-project/executor:latest
     env:
     - name: DOCKER_CONFIG
       value: /tekton/home/.docker
@@ -271,10 +271,10 @@ spec:
     - --skip-tls-verify-pull
     - --single-snapshot
     - --verbosity=info
-    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=dockerRepository=$(params.dockerRepo)/dockerhub
   - name: maven-build-isolated-zip
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgpg.skip=true
@@ -293,7 +293,7 @@ spec:
     - deploy
   - name: docker-build-isolated-maven-image
     workingDir: /workspace/git/isolated/full
-    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    image: $(params.dockerRepo)/common/kaniko-project/executor:latest
     env:
     - name: DOCKER_CONFIG
       value: /tekton/home/.docker

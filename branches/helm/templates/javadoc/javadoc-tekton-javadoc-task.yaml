@@ -24,14 +24,14 @@ spec:
     default: https://repo.maven.apache.org/maven2/
   - name: dockerRepo
     type: string
-    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+    default: harbor-cicsk8s.hursley.ibm.com
   - name: noPush
     type: string
     default: ""
   steps:
   - name: generate-pom
     workingDir: /workspace/git/obr/javadocs
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - galasabld 
     - template 
@@ -50,7 +50,7 @@ spec:
     - --javadoc
   - name: javadoc-build
     workingDir: /workspace/git/obr/javadocs
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgpg.skip=true
@@ -66,7 +66,7 @@ spec:
     - deploy
   - name: javadoc-image-build
     workingDir: /workspace/git/obr/javadocs
-    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    image: $(params.dockerRepo)/common/kaniko-project/executor:latest
     env:
     - name: DOCKER_CONFIG
       value: /tekton/home/.docker
@@ -81,11 +81,11 @@ spec:
     - --skip-tls-verify-pull
     - --single-snapshot
     - --verbosity=info
-    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=dockerRepository=$(params.dockerRepo)/dockerhub
     - --build-arg=branch=$(params.distBranch)
   - name: javadoc-repo-build
     workingDir: /workspace/git/obr/javadocs/docker
-    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    image: $(params.dockerRepo)/common/kaniko-project/executor:latest
     env:
     - name: DOCKER_CONFIG
       value: /tekton/home/.docker

@@ -4,11 +4,13 @@
 kind: PipelineRun
 apiVersion: tekton.dev/v1beta1
 metadata:
-  generateName: isolated-build-
+  generateName: eclipse-build-
 spec:
   params:
+  - name: isRelease
+    value: "true"
   pipelineRef:
-    name: isolated-repo-build
+    name: eclipse-repo-build
   serviceAccountName: build-bot
   podTemplate:
     nodeSelector:
@@ -21,4 +23,4 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 20Gi
+            storage: 3Gi

@@ -110,15 +110,15 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: simplatformSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
+      value: https://galasadev-cicsk8s.hursley.ibm.com/main/maven/simplatform/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     - name: runtimeSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/obr/
     - name: eclipseSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/eclipse/
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/eclipse/
     - name: javadocSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/javadoc/
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/javadoc/
     - name: docsSourceRepo
       value: https://nexus.galasa.dev/repository/docs/
     - name: noPush

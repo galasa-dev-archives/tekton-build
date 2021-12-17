@@ -8,6 +8,10 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - galasadev-cicsk8s.hursley.ibm.com
+    secretName: galasadev-cert
   rules:
   - host: galasadev-cicsk8s.hursley.ibm.com
     http:

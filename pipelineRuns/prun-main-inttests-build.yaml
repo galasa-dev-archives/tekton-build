@@ -12,8 +12,6 @@ spec:
   params:
   - name: distBranch
     value: main
-  - name: version
-    value: 0.17.0
   pipelineRef:
     name: inttests-repo-build
   serviceAccountName: build-bot
@@ -23,5 +21,5 @@ spec:
       name: git-inttests-main
   podTemplate:
     nodeSelector:
-      beta.kubernetes.io/arch: amd64
+      kubernetes.io/arch: amd64
       platform: hdc

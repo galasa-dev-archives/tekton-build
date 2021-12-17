@@ -16,8 +16,6 @@ spec:
   params:
   - name: distBranch
     type: string
-  - name: version
-    type: string
   - name: mavenCentralRepo
     type: string
     default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
@@ -26,20 +24,20 @@ spec:
     default: https://repo.maven.apache.org/maven2/
   - name: dockerRepo
     type: string
-    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+    default: harbor-cicsk8s.hursley.ibm.com
   - name: noPush
     type: string
     default: ""
   - name: bootstrap
     type: string
-    default: "http://cicsk8sm.hursley.ibm.com:31410/bootstrap"
+    default: "http://galasa-cicsk8s.hursley.ibm.com/bootstrap"
   - name: skipTestCatalog
     type: string
-    default: "false"
+    default: "true"
   steps:
   - name: inttests-compile
     workingDir: /workspace/git-inttests/galasa-inttests-parent
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - gradle
     - --no-daemon
@@ -52,7 +50,7 @@ spec:
     - publishToMavenLocal
   - name: generate-obr
     workingDir: /workspace/git-inttests/galasa-inttests-parent/dev.galasa.inttests.obr
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgpg.skip=true
@@ -71,7 +69,7 @@ spec:
     - dev.galasa:galasa-maven-plugin:deploytestcat
   - name: inttests-image
     workingDir: /workspace/git-inttests/docker
-    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    image: $(params.dockerRepo)/common/kaniko-project/executor:latest
     env:
     - name: DOCKER_CONFIG
       value: /tekton/home/.docker
@@ -79,7 +77,7 @@ spec:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
     - --context=/workspace/git-inttests/docker
-    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-inttests:$(params.version)-$(params.distBranch)
+    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-inttests:$(params.distBranch)
     - $(params.noPush)
     - --oci-layout-path=/workspace/git-simplaform/docker/image-digest
     - --skip-tls-verify

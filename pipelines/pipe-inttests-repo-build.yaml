@@ -15,17 +15,15 @@ spec:
   params:
   - name: distBranch
     type: string
-  - name: version
-    type: string
   - name: noPush
     type: string
     default: ""
   - name: bootstrap
     type: string
-    default: "http://cicsk8sm.hursley.ibm.com:31410/bootstrap"
+    default: "http://galasa-cicsk8s.hursley.ibm.com/bootstrap"
   - name: skipTestCatalog
     type: string
-    default: "false"
+    default: "true"
   tasks:
   - name: inttests-compile
     taskRef:
@@ -33,10 +31,8 @@ spec:
     params:
     - name: distBranch
       value: $(params.distBranch)
-    - name: version
-      value: $(params.version)
     - name: managersSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/managers/
     - name: noPush
       value: $(params.noPush)
     - name: bootstrap
@@ -58,6 +54,6 @@ spec:
       values: ["--no-push"]
     params:
     - name: namespace
-      value: galasa-prod
+      value: galasa-development
     - name: deployment
       value: maven-$(params.distBranch)-inttests

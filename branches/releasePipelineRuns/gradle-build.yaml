@@ -4,15 +4,24 @@
 kind: PipelineRun
 apiVersion: tekton.dev/v1beta1
 metadata:
-  generateName: isolated-build-
+  generateName: gradle-build-
 spec:
   params:
+  - name: isRelease
+    value: "true"
   pipelineRef:
-    name: isolated-repo-build
+    name: gradle-repo-build
   serviceAccountName: build-bot
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
+    volumes:
+    - name: gpggradle
+      secret:
+        secretName: gpggradle
+    - name: gpgkey
+      secret:
+        secretName: gpgkey
   workspaces:
   - name: git-workspace
     volumeClaimTemplate:
@@ -21,4 +30,5 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 20Gi
+            storage: 1Gi
+    

@@ -13,12 +13,10 @@ spec:
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
-      platform: hdc
   workspaces:
   - name: git-workspace
     volumeClaimTemplate:
       spec:
-        storageClassName: rbd
         accessModes:
           - ReadWriteOnce
         resources:

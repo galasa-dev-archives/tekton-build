@@ -111,7 +111,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: mavenSourceRepo
-      value: http://maven-$(params.distBranch)-maven.galasa-dev-{{ .Release.Name }}.svc.cluster.local/galasadev/$(params.distBranch)/maven/maven
+      value: http://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/maven
     - name: jacocoEnabled
       value: $(params.jacocoEnabled)
     - name: isRelease
@@ -139,7 +139,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: frameworkSourceRepo
-      value: http://maven-$(params.distBranch)-framework.galasa-dev-{{ .Release.Name }}.svc.cluster.local/galasadev/$(params.distBranch)/maven/framework/
+      value: http://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/framework/
     - name: jacocoEnabled
       value: $(params.jacocoEnabled)
     - name: isRelease
@@ -167,7 +167,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: extensionsSourceRepo
-      value: http://maven-$(params.distBranch)-extensions.galasa-dev-{{ .Release.Name }}.svc.cluster.local/galasadev/$(params.distBranch)/maven/extensions/
+      value: http://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/extensions/
     - name: jacocoEnabled
       value: $(params.jacocoEnabled)
     - name: isRelease
@@ -198,7 +198,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: managersSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     workspaces:
@@ -224,7 +224,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: obrSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/obr/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     workspaces:
@@ -239,7 +239,7 @@ spec:
     - name: distBranch
       value: $(params.distBranch)
     - name: managersSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     workspaces:
@@ -265,19 +265,3 @@ spec:
       value: galasa-dev-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-apidocs
-  - name: docker-operator-build
-    taskRef:
-      name: docker-operator-build
-    runAfter:
-    - recycle-extensions
-    - clone-docker
-    params:
-    - name: distBranch
-      value: $(params.distBranch)
-    - name: extensionsSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/extensions/
-    - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
-    workspaces:
-     - name: git-workspace
-       workspace: git-workspace

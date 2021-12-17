@@ -7,6 +7,8 @@ metadata:
   generateName: isolated-build-
 spec:
   params:
+  - name: isRelease
+    value: "true"
   pipelineRef:
     name: isolated-repo-build
   serviceAccountName: build-bot
