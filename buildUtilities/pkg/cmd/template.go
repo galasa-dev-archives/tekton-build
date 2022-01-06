@@ -32,7 +32,7 @@ var (
 		Use:   "template",
 		Short: "generates files from a template",
 		Long:  "Generates files from a template using the Galasa release metadata file",
-		Run:   execute,
+		Run:   templateExecute,
 	}
 
 	release galasayaml.Release
@@ -67,7 +67,7 @@ func init() {
 	rootCmd.AddCommand(templateCmd)
 }
 
-func execute(cmd *cobra.Command, args []string) {
+func templateExecute(cmd *cobra.Command, args []string) {
 	fmt.Printf("Galasa Build - Template - version %v\n", version)
 
 	if releaseMetadata == nil {

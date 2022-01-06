@@ -17,7 +17,7 @@ var rootCmd = &cobra.Command{
 	Long:  "",
 }
 
-var version = "0.0.2"
+var version = "0.0.3"
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
