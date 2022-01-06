@@ -20,7 +20,7 @@ var (
     githubBranchCopyCmd = &cobra.Command{
 		Use:   "copy",
 		Short: "Copy a branch to a new one",
-		Long:  "Copy an existing branch to a new one,  without have to clone and push locally",
+		Long:  "Copy an existing branch to a new one,  without having to clone and push locally",
 		Run:   githubBranchCopyExecute,
 	}
 
