@@ -1,4 +1,4 @@
-FROM nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080/library/ubuntu:latest
+FROM harbor-cicsk8s.hursley.ibm.com/dockerhub/library/ubuntu:latest
 
 ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/London"
 RUN apt-get update && apt-get install -y unzip \
@@ -36,8 +36,8 @@ RUN java -version
 
 # Installing maven
 RUN mkdir /opt/maven
-RUN curl -L https://downloads.apache.org/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz -o /opt/maven/apache-maven-3.8.1-bin.tar.gz && tar -zxvf /opt/maven/apache-maven-3.8.1-bin.tar.gz -C /opt/maven/ && rm /opt/maven/apache-maven-3.8.1-bin.tar.gz
-ENV PATH=$PATH:/opt/maven/apache-maven-3.8.1/bin
+RUN curl -L https://downloads.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz -o /opt/maven/apache-maven-3.8.4-bin.tar.gz && tar -zxvf /opt/maven/apache-maven-3.8.4-bin.tar.gz -C /opt/maven/ && rm /opt/maven/apache-maven-3.8.4-bin.tar.gz
+ENV PATH=$PATH:/opt/maven/apache-maven-3.8.4/bin
 
 RUN mvn -v
 
@@ -77,7 +77,7 @@ RUN mvn -B deploy && rm -rf /opt/maven/preload/target && rm -rf /opt/maven/prelo
 
 # Installing galasabld
 RUN mkdir -p /opt/galasa/bin
-RUN curl -L http://cicscit.hursley.ibm.com/galasadev/buildutils/galasabld-linux-amd64 -o /opt/galasa/bin/galasabld
+RUN curl -L http://galasadev-cicsk8s.hursley.ibm.com/buildutils/galasabld-linux-amd64 -o /opt/galasa/bin/galasabld
 RUN chmod +x /opt/galasa/bin/galasabld
 ENV PATH=$PATH:/opt/galasa/bin
 
