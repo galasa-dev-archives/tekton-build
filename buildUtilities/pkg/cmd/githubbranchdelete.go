@@ -50,7 +50,6 @@ func githubBranchDeleteExecute(cmd *cobra.Command, args []string) {
 	}
     
     req.Header.Set("Authorization", basicAuth)
-	req.Header.Set("Content-Type", "application/json")
 
     client := &http.Client{}
     resp, err := client.Do(req)

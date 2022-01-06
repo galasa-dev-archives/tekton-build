@@ -17,17 +17,17 @@ else
     fromRef="--branch $1"
 fi
 
-galasabld github branch copy --credentials creds.yaml --repository gradle            $fromRef --to $targetBranch 
-galasabld github branch copy --credentials creds.yaml --repository maven             $fromRef --to $targetBranch 
-galasabld github branch copy --credentials creds.yaml --repository framework         $fromRef --to $targetBranch 
-galasabld github branch copy --credentials creds.yaml --repository extensions        $fromRef --to $targetBranch 
-galasabld github branch copy --credentials creds.yaml --repository obr               $fromRef --to $targetBranch 
-galasabld github branch copy --credentials creds.yaml --repository docker            $fromRef --to $targetBranch 
-galasabld github branch copy --credentials creds.yaml --repository isolated          $fromRef --to $targetBranch 
-galasabld github branch copy --credentials creds.yaml --repository eclipse           $fromRef --to $targetBranch 
-galasabld github branch copy --credentials creds.yaml --repository cli               $fromRef --to $targetBranch 
-galasabld github branch copy --credentials creds.yaml --repository tekton-build      $fromRef --to $targetBranch 
-galasabld github branch copy --credentials creds.yaml --repository integrationtests  $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository gradle            $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository maven             $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository framework         $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository extensions        $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository obr               $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository docker            $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository isolated          $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository eclipse           $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository cli               $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository tekton-build      $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository integrationtests  $fromRef --to $targetBranch 
 
 kubectl create namespace galasa-branch-$targetBranch
 

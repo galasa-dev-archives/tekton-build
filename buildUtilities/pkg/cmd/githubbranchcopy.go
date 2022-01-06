@@ -45,6 +45,11 @@ func githubBranchCopyExecute(cmd *cobra.Command, args []string) {
 		branchCopyFromBranch = "main"
 	}
 
+	basicAuth, err := githubGetBasicAuth()
+    if err != nil {
+        panic(err)
+    }
+
 	// First get the sha of the from branch
 
 	var url = ""
@@ -54,7 +59,15 @@ func githubBranchCopyExecute(cmd *cobra.Command, args []string) {
 		url = fmt.Sprintf("https://api.github.com/repos/galasa-dev/%v/git/ref/tags/%v", githubRepository, branchCopyFromTag)
 	}
 
-	resp, err := http.Get(url);
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		panic(nil)
+	}
+    
+    req.Header.Set("Authorization", basicAuth)
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
@@ -78,7 +91,15 @@ func githubBranchCopyExecute(cmd *cobra.Command, args []string) {
 	} else {
 		url = fmt.Sprintf("https://api.github.com/repos/galasa-dev/%v/git/tags/%v", githubRepository, reference.Object.Sha)
 
-		respTag, err := http.Get(url);
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			panic(nil)
+		}
+		
+		req.Header.Set("Authorization", basicAuth)
+	
+		client := &http.Client{}
+		respTag, err := client.Do(req)
 		if err != nil {
 			panic(err)
 		}
@@ -113,12 +134,7 @@ func githubBranchCopyExecute(cmd *cobra.Command, args []string) {
 		panic(err)
 	}
 
-    basicAuth, err := githubGetBasicAuth()
-    if err != nil {
-        panic(err)
-    }
-
-	req, err := http.NewRequest("POST", url, newReferenceBuffer)
+	req, err = http.NewRequest("POST", url, newReferenceBuffer)
 	if err != nil {
 		panic(nil)
 	}
@@ -126,7 +142,6 @@ func githubBranchCopyExecute(cmd *cobra.Command, args []string) {
     req.Header.Set("Authorization", basicAuth)
 	req.Header.Set("Content-Type", "application/json")
 
-    client := &http.Client{}
     respNew, err := client.Do(req)
     if err != nil {
         panic(err)
