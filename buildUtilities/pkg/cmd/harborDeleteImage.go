@@ -12,13 +12,9 @@ import (
 )
 
 var (
-	harbor      string
-	username    string
-	password    string
-	project     string
-	repository  string
-	tag         string
-	credentials string
+	project    string
+	repository string
+	tag        string
 
 	harborDeleteCmd = &cobra.Command{
 		Use:   "deleteimage",
@@ -30,19 +26,15 @@ var (
 )
 
 func init() {
-	harborDeleteCmd.PersistentFlags().StringVarP(&harbor, "harbor", "e", "", "Harbor URL endpoint")
-	harborDeleteCmd.PersistentFlags().StringVarP(&username, "username", "u", "", "User for Harbor login. Must have sufficent authority")
-	harborDeleteCmd.PersistentFlags().StringVarP(&password, "password", "s", "", "Password")
 	harborDeleteCmd.PersistentFlags().StringVarP(&project, "project", "p", "", "Which project to be interacting with")
 	harborDeleteCmd.PersistentFlags().StringVarP(&repository, "repository", "r", "", "Which repository to be interacting with")
 	harborDeleteCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "", "Which tag to be interacting with")
-	harborDeleteCmd.PersistentFlags().StringVarP(&credentials, "credentials", "c", "", "A file path to a credentials file")
 
 	harborCmd.AddCommand(harborDeleteCmd)
 }
 
 func executeHarbor(cmd *cobra.Command, args []string) {
-	if harbor == "" {
+	if harborRepository == "" {
 		panic("Please provide a Harbor endpoint URL using the --harbor flag")
 	}
 	if project == "" {
@@ -58,7 +50,7 @@ func executeHarbor(cmd *cobra.Command, args []string) {
 	client := http.Client{
 		Timeout: time.Second * 30,
 	}
-	req, err := http.NewRequest("DELETE", harbor+v2Api+"/projects/"+project+"/repositories/"+repository+"/artifacts/"+tag+"/tags/"+tag, nil)
+	req, err := http.NewRequest("DELETE", harborRepository+v2Api+"/projects/"+project+"/repositories/"+repository+"/artifacts/"+tag+"/tags/"+tag, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -76,17 +68,17 @@ func executeHarbor(cmd *cobra.Command, args []string) {
 }
 
 func setBasicAuth(req *http.Request) {
-	if credentials == "" {
-		if username == "" {
+	if harborCredentials == "" {
+		if harborUsername == "" {
 			panic("Please provide a username using the --username flag")
 		}
-		if password == "" {
+		if harborPassword == "" {
 			panic("Please provide a password using the --password flag")
 		}
 
-		req.SetBasicAuth(username, password)
+		req.SetBasicAuth(harborPassword, harborUsername)
 	} else {
-		in, err := ioutil.ReadFile(credentials)
+		in, err := ioutil.ReadFile(harborCredentials)
 		if err != nil {
 			panic(err)
 		}
