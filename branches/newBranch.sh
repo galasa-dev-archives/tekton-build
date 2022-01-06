@@ -1,24 +1,5 @@
 #!/bin/bash
 
-cloneRepo() {
-    local repo=$1
-
-    cd $reposDir
-    
-    git clone --branch $sourceBranch git@github.com:galasa-dev/$repo.git $repo
-
-    cd $repo
-    git checkout -f -B $targetBranch
-
-    git push -f origin $targetBranch
-
-    echo "Cloned $repo"
-    echo ""
-    echo ""
-}
-
-
-
 set -e
 
 if [ -z ${1+x} ]; then echo "source branch not provided"; exit 1; else echo "Source branch is $1"; fi
@@ -27,29 +8,26 @@ if [ -z ${2+x} ]; then echo "target branch not provided"; exit 1; else echo "Tar
 branchesDir=$PWD
 reposDir="/tmp/galasarepos"
 
-sourceBranch=$1
 targetBranch=$2
 
-echo "deleting repos directory"
-if [ -d $reposDir ]; then rm -rf $reposDir; fi
-mkdir $reposDir
-echo ""
-echo ""
+if [[ $1 == v* ]];
+then
+    fromRef="--tag $1"
+else 
+    fromRef="--branch $1"
+fi
 
-cd $reposDir
-cloneRepo gradle        
-cloneRepo maven         
-cloneRepo framework     
-cloneRepo extensions    
-cloneRepo managers      
-cloneRepo obr           
-cloneRepo docker        
-cloneRepo isolated      
-cloneRepo eclipse       
-cloneRepo cli           
-cloneRepo tekton-build  
-
-
+galasabld github branch copy --credentials creds.yaml --repository gradle            $fromRef --to $targetBranch 
+galasabld github branch copy --credentials creds.yaml --repository maven             $fromRef --to $targetBranch 
+galasabld github branch copy --credentials creds.yaml --repository framework         $fromRef --to $targetBranch 
+galasabld github branch copy --credentials creds.yaml --repository extensions        $fromRef --to $targetBranch 
+galasabld github branch copy --credentials creds.yaml --repository obr               $fromRef --to $targetBranch 
+galasabld github branch copy --credentials creds.yaml --repository docker            $fromRef --to $targetBranch 
+galasabld github branch copy --credentials creds.yaml --repository isolated          $fromRef --to $targetBranch 
+galasabld github branch copy --credentials creds.yaml --repository eclipse           $fromRef --to $targetBranch 
+galasabld github branch copy --credentials creds.yaml --repository cli               $fromRef --to $targetBranch 
+galasabld github branch copy --credentials creds.yaml --repository tekton-build      $fromRef --to $targetBranch 
+galasabld github branch copy --credentials creds.yaml --repository integrationtests  $fromRef --to $targetBranch 
 
 kubectl create namespace galasa-branch-$targetBranch
 

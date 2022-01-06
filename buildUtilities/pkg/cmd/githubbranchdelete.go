@@ -38,8 +38,22 @@ func githubBranchDeleteExecute(cmd *cobra.Command, args []string) {
         os.Exit(1)
 	}
 
+    basicAuth, err := githubGetBasicAuth()
+    if err != nil {
+        panic(err)
+    }
+
 	url := fmt.Sprintf("https://api.github.com/repos/galasa-dev/%v/git/ref/heads/%v", githubRepository, branchDeleteBranch)
-	resp, err := http.Get(url);
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		panic(nil)
+	}
+    
+    req.Header.Set("Authorization", basicAuth)
+	req.Header.Set("Content-Type", "application/json")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
@@ -54,13 +68,9 @@ func githubBranchDeleteExecute(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-    basicAuth, err := githubGetBasicAuth()
-    if err != nil {
-        panic(err)
-    }
 	url = fmt.Sprintf("https://api.github.com/repos/galasa-dev/%v/git/refs/heads/%v", githubRepository, branchDeleteBranch)
 
-	req, err := http.NewRequest("DELETE", url, nil)
+	req, err = http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		panic(nil)
 	}
@@ -68,7 +78,6 @@ func githubBranchDeleteExecute(cmd *cobra.Command, args []string) {
     req.Header.Set("Authorization", basicAuth)
 	req.Header.Set("Content-Type", "application/json")
 
-    client := &http.Client{}
     respDelete, err := client.Do(req)
     if err != nil {
         panic(err)

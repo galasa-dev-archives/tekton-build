@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
 	"galasa.dev/buildUtilities/pkg/galasayaml"
@@ -60,10 +61,13 @@ func executeHarbor(cmd *cobra.Command, args []string) {
 	if err != nil {
 		panic(err)
 	}
-	if resp.StatusCode == 200 {
-		fmt.Println("OK")
+	if resp.StatusCode == http.StatusOK {
+		fmt.Printf("Image %v/%v:%v deleted from harbor\n", project, repository, tag)
+	} else if resp.StatusCode == http.StatusNotFound{
+		fmt.Printf("Image %v/%v:%v does not exist in harbor harbor\n", project, repository, tag)
 	} else {
 		fmt.Printf("FAILED - Repsonse from harbor: %s\n", resp.Status)
+		os.Exit(1)
 	}
 }
 
