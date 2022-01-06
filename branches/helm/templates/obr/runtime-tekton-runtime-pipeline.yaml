@@ -126,7 +126,7 @@ spec:
     - framework-build
     params:
     - name: namespace
-      value: galasa-dev-{{ .Release.Name }}
+      value: galasa-branch-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-framework
   - name: extensions-build
@@ -154,7 +154,7 @@ spec:
     - extensions-build
     params:
     - name: namespace
-      value: galasa-dev-{{ .Release.Name }}
+      value: galasa-branch-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-extensions
   - name: managers-build
@@ -182,7 +182,7 @@ spec:
     - managers-build
     params:
     - name: namespace
-      value: galasa-dev-{{ .Release.Name }}
+      value: galasa-branch-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-managers
   - name: obr-build
@@ -211,7 +211,7 @@ spec:
     - obr-build
     params:
     - name: namespace
-      value: galasa-dev-{{ .Release.Name }}
+      value: galasa-branch-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-obr
   - name: obr-embedded
@@ -252,7 +252,7 @@ spec:
     - javadoc-build
     params:
     - name: namespace
-      value: galasa-dev-{{ .Release.Name }}
+      value: galasa-branch-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-javadoc
   - name: recycle-apidoc
@@ -262,6 +262,6 @@ spec:
     - javadoc-build
     params:
     - name: namespace
-      value: galasa-dev-{{ .Release.Name }}
+      value: galasa-branch-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-apidocs

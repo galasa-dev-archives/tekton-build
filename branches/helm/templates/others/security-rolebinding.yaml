@@ -8,7 +8,7 @@ subjects:
   namespace: tekton
 - kind: ServiceAccount
   name: build-bot
-  namespace: galasa-dev-{{ .Release.Name }}
+  namespace: galasa-branch-{{ .Release.Name }}
 roleRef:
   kind: Role
   name: tekton-build

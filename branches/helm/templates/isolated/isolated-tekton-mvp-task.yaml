@@ -240,7 +240,7 @@ spec:
     image: $(params.dockerRepo)/common/kaniko-project/executor:latest
     env:
     - name: DOCKER_CONFIG
-      value: /tekton/home/.docker
+      value: /tekton/creds/.docker
     command:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
@@ -258,7 +258,7 @@ spec:
     image: $(params.dockerRepo)/common/kaniko-project/executor:latest
     env:
     - name: DOCKER_CONFIG
-      value: /tekton/home/.docker
+      value: /tekton/creds/.docker
     command:
     - /kaniko/executor
     - --no-push
@@ -297,7 +297,7 @@ spec:
     image: $(params.dockerRepo)/common/kaniko-project/executor:latest
     env:
     - name: DOCKER_CONFIG
-      value: /tekton/home/.docker
+      value: /tekton/creds/.docker
     command:
     - /kaniko/executor
     - --dockerfile=./DockerfileZip

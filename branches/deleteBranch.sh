@@ -43,10 +43,6 @@ deleteRepo tekton-build
 
 
 echo "deleting namespace"
-kubectl delete namespace galasa-dev-$targetBranch --wait=false
-sleep 2
-#do after a while,  2 seconds too fast
-#kubectl get ns galasa-dev-$targetBranch -o json | jq -j '.spec.finalizers=null' > /tmp/galasa-dev-$targetBranch.json
-#kubectl replace --raw "/api/v1/namespaces/galasa-dev-$targetBranch/finalize" -f /tmp/galasa-dev-$targetBranch.json
+kubectl delete namespace galasa-branch-$targetBranch --wait=false
 
 echo "complete"

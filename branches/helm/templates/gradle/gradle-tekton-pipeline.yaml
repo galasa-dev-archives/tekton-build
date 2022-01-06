@@ -71,6 +71,6 @@ spec:
       values: ["--no-push"]
     params:
     - name: namespace
-      value: galasa-dev-{{ .Release.Name }}
+      value: galasa-branch-{{ .Release.Name }}
     - name: deployment
       value: maven-$(params.distBranch)-gradle
