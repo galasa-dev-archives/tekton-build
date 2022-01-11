@@ -13,7 +13,7 @@ spec:
   - name: revision
     description: git revision to checkout (branch, tag, sha, ref�)
     type: string
-    default: master
+    default: main
   - name: submodules
     description: defines if the resource should initialize and fetch the submodules
     type: string
