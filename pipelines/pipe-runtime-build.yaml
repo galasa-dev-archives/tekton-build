@@ -201,7 +201,7 @@ spec:
     - name: managersSourceRepo
       value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     workspaces:
      - name: git-workspace
        workspace: git-workspace
@@ -227,7 +227,7 @@ spec:
     - name: obrSourceRepo
       value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/obr/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     workspaces:
      - name: git-workspace
        workspace: git-workspace
@@ -242,7 +242,7 @@ spec:
     - name: managersSourceRepo
       value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     workspaces:
      - name: git-workspace
        workspace: git-workspace

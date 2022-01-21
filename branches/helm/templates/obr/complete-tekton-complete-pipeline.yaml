@@ -1,0 +1,572 @@
+#
+# Copyright contributors to the Galasa project 
+#
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: complete-build
+spec:
+  workspaces:
+  - name: git-workspace
+    optional: false
+  params:
+  - name: distBranch
+    type: string
+    default: "{{ .Release.Name }}"
+  - name: refspec
+    type: string
+    default: "+refs/heads/{{ .Release.Name }}:refs/heads/{{ .Release.Name }}"
+  - name: jacocoEnabled
+    type: string
+    default: "true"
+  - name: isRelease
+    type: string
+    default: "false"
+  - name: noPush
+    type: string
+    default: ""
+  tasks:
+  - name: clone-gradle
+    taskRef: 
+      name: git-clone
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/gradle
+    - name: revision
+      value: $(params.distBranch)
+    - name: refspec
+      value: $(params.refspec)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: gradle
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-maven
+    taskRef: 
+      name: git-clone
+    runAfter:
+    - clone-gradle
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/maven
+    - name: revision
+      value: $(params.distBranch)
+    - name: refspec
+      value: $(params.refspec)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: maven
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-framework
+    taskRef: 
+      name: git-clone
+    runAfter:
+    - clone-maven
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/framework
+    - name: revision
+      value: $(params.distBranch)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: framework
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-extensions
+    taskRef: 
+      name: git-clone
+    runAfter:
+    - clone-framework
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/extensions
+    - name: revision
+      value: $(params.distBranch)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: extensions
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-managers
+    taskRef: 
+      name: git-clone
+    runAfter:
+    - clone-extensions
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/managers
+    - name: revision
+      value: $(params.distBranch)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: managers
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-obr
+    taskRef: 
+      name: git-clone
+    runAfter:
+    - clone-managers
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/obr
+    - name: revision
+      value: $(params.distBranch)
+    - name: refspec
+      value: $(params.refspec)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: obr
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-docker
+    taskRef: 
+      name: git-clone
+    runAfter:
+    - clone-obr
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/docker
+    - name: revision
+      value: $(params.distBranch)
+    - name: refspec
+      value: $(params.refspec)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: docker
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-eclipse
+    taskRef: 
+      name: git-clone
+    runAfter:
+    - clone-docker
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/eclipse
+    - name: revision
+      value: $(params.distBranch)
+    - name: refspec
+      value: $(params.refspec)
+    - name: depth
+      value: "9999999"
+    - name: subdirectory
+      value: eclipse
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: clone-isolated
+    taskRef: 
+      name: git-clone
+    runAfter:
+    - clone-eclipse
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/isolated
+    - name: revision
+      value: $(params.distBranch)
+    - name: refspec
+      value: $(params.refspec)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: isolated
+    workspaces:
+     - name: output
+       workspace: git-workspace
+#
+#
+#
+  - name: gradle-compile
+    taskRef:
+      name: gradle-repo-build
+    runAfter:
+    - clone-gradle
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: noPush
+      value: $(params.noPush)
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-gradle
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - gradle-compile
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: maven-$(params.distBranch)-gradle
+#
+#
+#
+  - name: maven-compile
+    taskRef:
+      name: maven-repo-build
+    runAfter:
+    - clone-maven
+    - recycle-gradle
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: noPush
+      value: $(params.noPush)
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-maven
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - maven-compile
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: maven-$(params.distBranch)-maven
+#
+#
+#
+  - name: framework-build
+    taskRef:
+      name: framework-repo-build
+    runAfter:
+    - clone-framework
+    - recycle-maven
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: mavenSourceRepo
+      value: http://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/maven
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-framework
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - framework-build
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: maven-$(params.distBranch)-framework
+#
+#
+#
+  - name: extensions-build
+    taskRef:
+      name: extensions-repo-build
+    runAfter:
+    - recycle-framework
+    - clone-extensions
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: frameworkSourceRepo
+      value: http://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/framework/
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-extensions
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - extensions-build
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: maven-$(params.distBranch)-extensions
+#
+#
+#
+  - name: managers-build
+    taskRef:
+      name: managers-repo-build
+    runAfter:
+    - recycle-extensions
+    - clone-managers
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: extensionsSourceRepo
+      value: http://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/extensions/
+    - name: jacocoEnabled
+      value: $(params.jacocoEnabled)
+    - name: isRelease
+      value: $(params.isRelease)
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-managers
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - managers-build
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: maven-$(params.distBranch)-managers
+#
+#
+#
+  - name: obr-build
+    taskRef:
+      name: obr-repo-build
+    runAfter:
+    - recycle-managers
+    - clone-obr
+    - clone-framework
+    - clone-extensions
+    - clone-managers
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: managersSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/managers/
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-obr
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - obr-build
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: maven-$(params.distBranch)-obr
+  - name: obr-embedded
+    taskRef:
+      name: obr-docker-build
+    runAfter:
+    - recycle-obr
+    - clone-docker
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: obrSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/obr/
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: javadoc-build
+    taskRef:
+      name: javadoc-build
+    runAfter:
+    - recycle-obr
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: managersSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/managers/
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-javadoc
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - javadoc-build
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: maven-$(params.distBranch)-javadoc
+  - name: recycle-apidoc
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - javadoc-build
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: maven-$(params.distBranch)-apidocs
+#
+#
+#
+  - name: eclipse-build
+    taskRef:
+      name: eclipse-repo-build
+    runAfter:
+    - clone-eclipse
+    - recycle-obr
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: eclipseRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/photon/
+    - name: simplatformSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/main/maven/simplatform/
+    - name: runtimeSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/obr/
+    - name: noPush
+      value: $(params.noPush)
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-eclipse-maven
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - eclipse-build
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: maven-$(params.distBranch)-eclipse
+  - name: recycle-eclipse-p2
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - eclipse-build
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: p2-$(params.distBranch)
+#
+#
+#
+  - name: isolated-build
+    taskRef:
+      name: isolated-build
+    runAfter:
+    - clone-obr
+    - clone-framework
+    - clone-extensions
+    - clone-managers
+    - clone-isolated
+    - recycle-obr
+    - recycle-eclipse-maven
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: simplatformSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/simplatform/
+    - name: runtimeSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/obr/
+    - name: eclipseSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/eclipse/
+    - name: javadocSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/javadoc/
+    - name: docsSourceRepo
+      value: https://nexus.galasa.dev/repository/docs/
+    - name: noPush
+      value: $(params.noPush)
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-isolated-maven
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - isolated-build
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: maven-$(params.distBranch)-isolated
+  - name: mvp-build
+    taskRef:
+      name: mvp-build
+    runAfter:
+    - clone-obr
+    - clone-framework
+    - clone-extensions
+    - clone-managers
+    - clone-isolated
+    - recycle-obr
+    - recycle-eclipse-maven
+# single thread the builds whilst running smaller k8s
+    - isolated-build
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: simplatformSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/simplatform/
+    - name: runtimeSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/obr/
+    - name: eclipseSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/eclipse/
+    - name: javadocSourceRepo
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/javadoc/
+    - name: docsSourceRepo
+      value: https://nexus.galasa.dev/repository/docs/
+    - name: noPush
+      value: $(params.noPush)
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-mvp-maven
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - mvp-build
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-branch-$(params.distBranch)
+    - name: deployment
+      value: maven-$(params.distBranch)-mvp

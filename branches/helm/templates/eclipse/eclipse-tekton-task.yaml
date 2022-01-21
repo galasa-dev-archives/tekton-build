@@ -18,7 +18,7 @@ spec:
     default: 0.16.0
   - name: mavenCentralRepo
     type: string
-    default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    default: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
   - name: runtimeSourceRepo
     type: string
     default: https://repo.maven.apache.org/maven2/

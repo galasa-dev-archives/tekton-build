@@ -224,7 +224,7 @@ spec:
     - name: managersSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     resources:
       inputs:
       - name: git-obr
@@ -252,7 +252,7 @@ spec:
     - name: obrSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     resources:
       inputs:
       - name: git-docker
@@ -270,7 +270,7 @@ spec:
     - name: managersSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     resources:
       inputs:
       - name: git-obr
@@ -308,7 +308,7 @@ spec:
     - name: managersSourceRepo
       value: http://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     resources:
       inputs:
       - name: git-simplatform
@@ -339,7 +339,7 @@ spec:
     - name: simplatformSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     - name: runtimeSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     resources:
@@ -382,7 +382,7 @@ spec:
     - name: simplatformSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     - name: runtimeSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: eclipseSourceRepo
@@ -423,7 +423,7 @@ spec:
     - name: simplatformSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/simplatform/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     - name: runtimeSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/obr/
     - name: eclipseSourceRepo
@@ -461,7 +461,7 @@ spec:
     - name: extensionsSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/extensions/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     resources:
       inputs:
       - name: git-docker

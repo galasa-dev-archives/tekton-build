@@ -10,6 +10,7 @@ galasabld github branch delete --credentials githubcreds.yaml --repository gradl
 galasabld github branch delete --credentials githubcreds.yaml --repository maven             --branch $targetBranch 
 galasabld github branch delete --credentials githubcreds.yaml --repository framework         --branch $targetBranch 
 galasabld github branch delete --credentials githubcreds.yaml --repository extensions        --branch $targetBranch 
+galasabld github branch delete --credentials githubcreds.yaml --repository managers          --branch $targetBranch 
 galasabld github branch delete --credentials githubcreds.yaml --repository obr               --branch $targetBranch 
 galasabld github branch delete --credentials githubcreds.yaml --repository docker            --branch $targetBranch 
 galasabld github branch delete --credentials githubcreds.yaml --repository isolated          --branch $targetBranch 

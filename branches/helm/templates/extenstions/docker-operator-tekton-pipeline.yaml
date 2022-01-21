@@ -46,7 +46,7 @@ spec:
     - name: extensionsSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/extensions/
     - name: mavenCentralRepo
-      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+      value: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
     - name: noPush
       value: $(params.noPush)
     workspaces:

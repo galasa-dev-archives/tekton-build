@@ -21,6 +21,7 @@ galasabld github branch copy --credentials githubcreds.yaml --repository gradle 
 galasabld github branch copy --credentials githubcreds.yaml --repository maven             $fromRef --to $targetBranch 
 galasabld github branch copy --credentials githubcreds.yaml --repository framework         $fromRef --to $targetBranch 
 galasabld github branch copy --credentials githubcreds.yaml --repository extensions        $fromRef --to $targetBranch 
+galasabld github branch copy --credentials githubcreds.yaml --repository managers          $fromRef --to $targetBranch 
 galasabld github branch copy --credentials githubcreds.yaml --repository obr               $fromRef --to $targetBranch 
 galasabld github branch copy --credentials githubcreds.yaml --repository docker            $fromRef --to $targetBranch 
 galasabld github branch copy --credentials githubcreds.yaml --repository isolated          $fromRef --to $targetBranch 
