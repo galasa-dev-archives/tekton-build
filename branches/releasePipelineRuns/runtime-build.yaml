@@ -15,6 +15,7 @@ spec:
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
+      applevel: tekton
     volumes:
     - name: gpgkey
       secret:
